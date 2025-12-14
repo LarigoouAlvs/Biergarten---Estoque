@@ -164,10 +164,11 @@ async function carregarDados() {
 
     mov.itens.forEach(item => {
       linhas.push({
-        data,
-        produto: item.produto,
-        entrada: mov.tipo === "entrada" ? item.quantidade : "",
-        saida: mov.tipo === "saida" ? item.quantidade : ""
+  data,
+  colaborador: mov.colaborador || "-",
+  produto: item.produto,
+  entrada: mov.tipo === "entrada" ? item.quantidade : "",
+  saida: mov.tipo === "saida" ? item.quantidade : ""
       });
     });
   });
@@ -182,6 +183,7 @@ function render(linhas) {
       <thead>
         <tr>
           <th>Data</th>
+          <th>Colaborador</th>
           <th>Produto</th>
           <th>Entrada</th>
           <th>Saída</th>
@@ -191,6 +193,7 @@ function render(linhas) {
         ${linhas.map(l => `
           <tr>
             <td>${l.data}</td>
+            <td>${l.colaborador}</td>
             <td>${l.produto}</td>
             <td class="entrada">${l.entrada}</td>
             <td class="saida">${l.saida}</td>
@@ -207,4 +210,5 @@ carregarDados();
 
 </body>
 </html>
+
 
