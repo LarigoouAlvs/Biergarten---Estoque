@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biergarten | Solicitação de Hortifrúti</title>
+
+<style>
+:root {
+  --amarelo: #F4C430;
+  --preto: #1a1a1a;
+  --preto80: #262626;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--preto);
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: var(--amarelo);
+  margin: 0;
+}
+
+a.voltar {
+  color: #000;
+  background: var(--amarelo);
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.produto {
+  background: var(--preto80);
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.botoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+button {
+  background: var(--amarelo);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.lixeira {
+  background: none;
+  border: none;
+  color: #ff5252;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.contador {
+  font-weight: bold;
+}
+
+#concluir {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+.resumo {
+  margin-top: 20px;
+  background: var(--preto80);
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.resumo h2 {
+  color: var(--amarelo);
+  margin-top: 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topo">
+  <h1>🥬 Solicitação de Hortifrúti</h1>
+  <a href="index.html" class="voltar">⬅ Voltar</a>
+</div>
+
+<div id="lista"></div>
+
+<button id="concluir" class="hidden">✅ Concluir Pedido</button>
+
+<div id="resumo" class="resumo hidden">
+  <h2>🧺 Hortifrúti do dia</h2>
+  <ul id="itens"></ul>
+</div>
+
+<script>
+/* 🥕 LISTA DE FRUTAS */
+const frutas = [
+  "Uva Verde",
+  "Hortelã",
+  "Laranja",
+  "Laranja Bahia",
+  "Tangirina",
+  "Limão",
+  "Lima da Persia",
+  "Limão Siciliano",
+  "Abacaxi",
+  "Kiwi",
+  "Manga",
+  "Morango",
+  "Pimenta",
+  "Maracujá",
+  "Cana",
+  "Alecrim",
+];
+
+/* ESTADO */
+let selecionados = {};
+
+/* ELEMENTOS */
+const lista = document.getElementById("lista");
+const concluir = document.getElementById("concluir");
+const resumo = document.getElementById("resumo");
+const itens = document.getElementById("itens");
+
+/* RENDER */
+function render() {
+  lista.innerHTML = "";
+
+  frutas.forEach(fruta => {
+    const qtd = selecionados[fruta] || 0;
+
+    const div = document.createElement("div");
+    div.className = "produto";
+
+    div.innerHTML = `
+      <span>${fruta}</span>
+      <div class="botoes">
+        <button onclick="add('${fruta}')">+1</button>
+        ${qtd > 0 ? `
+          <span class="contador">${qtd}x</span>
+          <button class="lixeira" onclick="remover('${fruta}')">🗑️</button>
+        ` : ""}
+      </div>
+    `;
+
+    lista.appendChild(div);
+  });
+
+  concluir.classList.toggle("hidden", Object.keys(selecionados).length === 0);
+}
+
+/* ➕ ADD */
+window.add = fruta => {
+  selecionados[fruta] = (selecionados[fruta] || 0) + 1;
+  render();
+};
+
+/* 🗑️ REMOVER */
+window.remover = fruta => {
+  delete selecionados[fruta];
+  render();
+};
+
+/* ✅ CONCLUIR */
+concluir.onclick = () => {
+  itens.innerHTML = "";
+
+  Object.entries(selecionados).forEach(([fruta, qtd]) => {
+    const li = document.createElement("li");
+    li.textContent = `${qtd}x ${fruta}`;
+    itens.appendChild(li);
+  });
+
+  resumo.classList.remove("hidden");
+
+  /* LIMPA PEDIDO (SÓ DO DIA) */
+  selecionados = {};
+  render();
+};
+
+/* INIT */
+render();
+</script>
+
+</body>
+</html>
