@@ -239,8 +239,11 @@ function atualizarResumo() {
 
   selecionados.forEach(i => {
     const li = document.createElement("li");
-    li.innerHTML = `${i.quantidade} x ${i.produto}
-      <button onclick="remover('${i.produto}')">🗑️</button>`;
+    li.innerHTML = `
+  <span>${i.quantidade} x ${i.produto}</span>
+  <button class="lixeira" onclick="remover('${i.produto}')" title="Remover">🗑️</button>
+`;
+
     itens.appendChild(li);
   });
 
@@ -285,4 +288,5 @@ atualizarResumo();
 
 </body>
 </html>
+
 
