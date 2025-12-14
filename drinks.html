@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biergarten | Preparo de Drinks</title>
+
+<style>
+:root {
+  --amarelo: #F4C430;
+  --preto: #1a1a1a;
+  --preto80: #262626;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--preto);
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: var(--amarelo);
+  margin: 0;
+}
+
+a.voltar {
+  background: var(--amarelo);
+  color: #000;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: var(--preto80);
+  border-left: 6px solid var(--amarelo);
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.nome {
+  color: var(--amarelo);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.tipo {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 0.4fr;
+  gap: 15px;
+}
+
+.col h4 {
+  margin-top: 0;
+  color: var(--amarelo);
+}
+
+.visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 42px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="topo">
+  <h1>🍸 Preparo de Drinks</h1>
+  <a href="index.html" class="voltar">⬅ Voltar</a>
+</div>
+
+<input type="text" id="busca" placeholder="🔍 Buscar drink, chá ou suco...">
+
+<div id="lista"></div>
+
+<script>
+const receitas = [
+
+/* ================= DRINKS CLÁSSICOS ================= */
+
+{
+  nome: "Margarita",
+  tipo: "Drink",
+  icon: "🍹",
+  preparo: [
+    "Adicionar suco de limão, xarope de açúcar, licor fino e tequila na coqueteleira",
+    "Completar com gelo e bater por 25–30 segundos",
+    "Preparar a borda da taça com limão e sal",
+    "Filtragem dupla diretamente na taça",
+    "Finalizar com limão-taiti"
+  ],
+  ingredientes: [
+    "Tequila Prata – 80 ml",
+    "Licor Fino Stock – 30 ml",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 10 ml",
+    "Sal – borda"
+  ]
+},
+
+{
+  nome: "Aperol Spritz",
+  tipo: "Drink",
+  icon: "🍊",
+  preparo: [
+    "Na taça de Spritz, adicionar gelo até ¾ da capacidade e mexer para resfriar",
+    "Utilizando um strainer, descartar a água do resfriamento",
+    "Completar a taça com gelo até o topo",
+    "Adicionar os ingredientes na seguinte ordem: espumante, água com gás e Aperol",
+    "Finalizar com duas fatias finas de laranja cortadas ao meio"
+  ],
+  ingredientes: [
+    "Aperol – 80 ml",
+    "Espumante Salton Brut – 150 ml",
+    "Água com Gás – 50 ml",
+    "Laranja (garnish) – 50 g",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Taça Spritz – 1 un"
+  ]
+},
+
+{
+  nome: "Piña Colada",
+  tipo: "Drink",
+  icon: "🍍",
+  preparo: [
+    "Na coqueteleira, adicionar leite de coco, leite condensado, suco de abacaxi e rum",
+    "Preparar a borda da taça passando leite condensado e depois coco queimado",
+    "Adicionar bastante gelo na coqueteleira e bater vigorosamente",
+    "Adicionar gelo novo na taça preparada",
+    "Filtrar a mistura diretamente na taça",
+    "Finalizar com um triângulo de abacaxi"
+  ],
+  ingredientes: [
+    "Rum Bacardi Prata – 60 ml",
+    "Suco de Abacaxi (Maguary) – 90 ml",
+    "Leite de Coco – 60 ml",
+    "Leite Condensado – 60 ml",
+    "Abacaxi (decoração) – 70 g",
+    "Coco Queimado – 10 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Taça Escandinava – 1 un"
+  ]
+},
+
+{
+  nome: "Dry Martini",
+  tipo: "Drink",
+  icon: "🍸",
+  preparo: [
+    "Resfriar previamente o mixing glass e a taça de martini com gelo",
+    "Descartar o gelo do mixing glass",
+    "Adicionar gin e vermouth dry",
+    "Completar com gelo fresco e mexer por aproximadamente 40 segundos",
+    "Descartar o gelo da taça",
+    "Fazer uma filtragem simples diretamente na taça"
+  ],
+  ingredientes: [
+    "Gin Tanqueray – 100 ml",
+    "Martini Dry – 20 ml",
+    "Casca de Laranja Bahia – garnish",
+    "Gelo – 360 g",
+    "Taça Martini – 1 un"
+  ]
+},
+
+{
+  nome: "Dirty Martini",
+  tipo: "Drink",
+  icon: "🍸",
+  preparo: [
+    "Resfriar previamente o mixing glass e a taça de martini com gelo",
+    "Descartar o gelo do mixing glass e adicionar gin, vermouth dry e a calda da azeitona",
+    "Completar com gelo fresco e mexer por aproximadamente 40 segundos para resfriar e diluir",
+    "Descartar o gelo da taça de martini",
+    "Fazer uma filtragem simples diretamente na taça",
+    "Aromatizar expressando os óleos da casca de laranja Bahia sobre o drink",
+    "Finalizar com duas azeitonas com caroço em um palito dentro da taça"
+  ],
+  ingredientes: [
+    "Gin Amazoni – 100 ml",
+    "Martini Dry – 20 ml",
+    "Calda da Azeitona – 30 g",
+    "Azeitona com caroço – 2 un",
+    "Palito de bambu – 1 un",
+    "Gelo – 360 g",
+    "Taça Martini – 1 un"
+  ]
+},
+
+{
+  nome: "Negroni",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Resfriar mixing glass e copo",
+    "Adicionar gin, campari e vermouth em partes iguais",
+    "Mexer por 25–30 segundos",
+    "Filtrar para copo com gelo grande",
+    "Aromatizar com casca de laranja"
+  ],
+  ingredientes: [
+    "Gin – 30 ml",
+    "Campari – 30 ml",
+    "Martini Rosso – 30 ml",
+    "Casca de laranja – garnish"
+  ]
+},
+
+{
+  nome: "Cosmopolitan",
+  tipo: "Drink",
+  icon: "🍸",
+  preparo: [
+    "Resfriar a taça com gelo",
+    "Adicionar ingredientes na coqueteleira",
+    "Bater com gelo",
+    "Filtrar para taça martini",
+    "Finalizar com casca de limão"
+  ],
+  ingredientes: [
+    "Vodka – 60 ml",
+    "Licor de laranja – 15 ml",
+    "Suco de cranberry – 30 ml",
+    "Sumo de limão – 10 ml"
+  ]
+},
+
+{
+  nome: "Kir Royal",
+  tipo: "Drink",
+  icon: "🥂",
+  preparo: [
+    "Resfriar previamente a taça flute com gelo britado",
+    "Descartar o gelo da taça",
+    "Adicionar 40 ml de licor creme de cassis no fundo da taça",
+    "Adicionar uma cereja sem talo no fundo da taça",
+    "Inclinar levemente a taça e completar lentamente com espumante, vertendo pela parede interna",
+    "Não misturar, mantendo o efeito degradê"
+  ],
+  ingredientes: [
+    "Licor Creme de Cassis – 40 ml",
+    "Espumante Salton Brut – 150 ml",
+    "Cereja – 1 un",
+    "Taça Flute – 1 un"
+  ]
+},
+
+{
+  nome: "Bellini",
+  tipo: "Drink",
+  icon: "🥂",
+  preparo: [
+    "Verificar a limpeza e o brilho da taça flute",
+    "Adicionar 40 ml de purê (concentrado) de pêssego no fundo da taça",
+    "Inclinar levemente a taça",
+    "Completar lentamente com espumante pela parede interna da taça",
+    "Mexer suavemente apenas uma vez para incorporar"
+  ],
+  ingredientes: [
+    "Concentrado de Pêssego – 40 ml",
+    "Espumante Salton Brut – 150 ml",
+    "Taça Flute – 1 un"
+  ]
+},
+
+{
+  nome: "Mimosa",
+  tipo: "Drink",
+  icon: "🥂",
+  preparo: [
+    "Verificar a limpeza e o brilho da taça flute ou taça de espumante",
+    "Adicionar 100 ml de suco de laranja natural gelado no fundo da taça",
+    "Evitar respingos nas laterais para manter a apresentação",
+    "Inclinar levemente a taça",
+    "Completar lentamente com espumante pela parede interna",
+    "Não misturar para preservar o visual do drink"
+  ],
+  ingredientes: [
+    "Suco de Laranja Natural – 100 ml",
+    "Espumante Salton Brut – 150 ml",
+    "Taça Flute ou Espumante – 1 un"
+  ]
+},
+
+{
+  nome: "Moscow Mule",
+  tipo: "Drink",
+  icon: "🍺",
+  preparo: [
+    "Posicionar a caneca de cobre previamente gelada na estação",
+    "Adicionar 30 ml de sumo de limão",
+    "Adicionar 40 ml de redução de gengibre e 30 ml de xarope de açúcar",
+    "Adicionar 60 ml de vodka",
+    "Completar a caneca com gelo até o topo, formando um pequeno domo",
+    "Acrescentar água com gás até 0,5 a 1 cm abaixo da borda",
+    "Misturar suavemente com a bailarina, dando 2 a 3 voltas leves apenas para integrar",
+    "Depositar 150 g de espuma de gengibre em formato de cone, centralizada",
+    "Polvilhar pó de limão sobre a espuma",
+    "Inserir uma fatia de limão desidratado em diagonal na espuma e adicionar o canudo",
+    "Limpar a borda e a parte externa da caneca para acabamento final"
+  ],
+  ingredientes: [
+    "Vodka – 60 ml",
+    "Redução de Gengibre – 40 ml",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Água com Gás – 75 ml",
+    "Espuma de Gengibre – 150 g",
+    "Pó de Limão Tahiti – 2 g",
+    "Limão Desidratado – 1 fatia",
+    "Gelo – q.s.",
+    "Canudo – 1 un",
+    "Caneca de Cobre – 1 un"
+  ]
+},
+
+{
+  nome: "Frida",
+  tipo: "Drink",
+  icon: "🍹",
+  preparo: [
+    "Gelar previamente a taça coupe com gelo britado",
+    "Na coqueteleira, macerar o abacaxi junto com o manjericão",
+    "Adicionar o sumo de limão, o licor Curaçao Blue e a tequila",
+    "Completar com bastante gelo e bater por 15 a 20 segundos até gelar",
+    "Realizar filtragem dupla para a taça coupe sem gelo",
+    "Preencher a taça com espuma de gengibre em formato de cone",
+    "Finalizar com rodela de abacaxi desidratado na diagonal"
+  ],
+  ingredientes: [
+    "Tequila Prata – 50 ml",
+    "Sumo de Limão – 30 ml",
+    "Curaçao Blue – 20 ml",
+    "Abacaxi – 150 g",
+    "Manjericão – 6 g",
+    "Espuma de Gengibre – 100 g",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Taça Coupe M – 1 un"
+  ]
+},
+
+{
+  nome: "Amarula Dream",
+  tipo: "Drink",
+  icon: "🍸",
+  preparo: [
+    "Decorar a metade externa superior da taça martini com cacau em pó",
+    "Na coqueteleira, adicionar os ingredientes em ordem",
+    "Adicionar gelo e bater por aproximadamente 20 segundos",
+    "Realizar filtragem dupla para a taça martini",
+    "Finalizar com physalis na borda da taça"
+  ],
+  ingredientes: [
+    "Amarula – 50 ml",
+    "Redução de Gengibre – 30 ml",
+    "Vodka – 30 ml",
+    "Cacau em Pó – q.s.",
+    "Physalis – 1 un",
+    "Gelo – 200 g",
+    "Taça Martini – 1 un"
+  ]
+},
+
+{
+  nome: "Catarina",
+  tipo: "Drink",
+  icon: "🍹",
+  preparo: [
+    "Gelar previamente a taça coupe",
+    "Na coqueteleira, adicionar todos os ingredientes exceto a flor comestível",
+    "Realizar hard shake por 15 segundos",
+    "Fazer filtragem dupla para a taça com gelo em esfera",
+    "Finalizar decorando com flor comestível utilizando pinça"
+  ],
+  ingredientes: [
+    "Steinhager – 75 ml",
+    "Sumo de Limão Siciliano – 15 ml",
+    "Xarope de Mel – 40 g",
+    "Angostura Bitter – 1 dash",
+    "Gelo em Esfera – 1 un",
+    "Flor Comestível – 2 un",
+    "Taça Coupe G – 1 un"
+  ]
+},
+
+{
+  nome: "Lunelli",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Na coqueteleira, adicionar os ingredientes em ordem",
+    "Adicionar gelo e bater por aproximadamente 20 segundos",
+    "Realizar filtragem dupla para copo on the rocks previamente gelado com gelo translúcido",
+    "Finalizar com triângulo de toranja desidratada e um ramo de manjericão"
+  ],
+  ingredientes: [
+    "Sagativa – 40 ml",
+    "Aperol – 15 ml",
+    "Limoncello – 15 ml",
+    "Limão Siciliano – 5 ml",
+    "Mel – 15 ml",
+    "Manjericão – 3 g",
+    "Toranja Desidratada – 1 un",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Copo On The Rocks – 1 un"
+  ]
+},
+
+{
+  nome: "Russian Brownie",
+  tipo: "Drink",
+  icon: "🍸",
+  preparo: [
+    "Na coqueteleira com gelo, adicionar todos os ingredientes em ordem",
+    "Bater por aproximadamente 15 segundos",
+    "Realizar filtragem dupla para a taça martini",
+    "Finalizar com dois quadrados de brownie em um espeto de ferro"
+  ],
+  ingredientes: [
+    "Vodka Infusionada – 30 ml",
+    "Licor Café Cristal – 15 ml",
+    "Amarula – 30 ml",
+    "Monin Amêndoas – 15 ml",
+    "Sorvete de Baunilha – 1 bola",
+    "Brownie – 15 g",
+    "Gelo – 180 g",
+    "Taça Martini – 1 un"
+  ]
+},
+
+{
+  nome: "Saint Tropez",
+  tipo: "Drink",
+  icon: "🍹",
+  preparo: [
+    "Na coqueteleira, adicionar o gin, o xarope de pera, o mel e o sumo de limão",
+    "Adicionar gelo e bater por aproximadamente 20 segundos",
+    "Realizar filtragem dupla para a taça coupe G com gelo em esfera",
+    "Adicionar o espumante",
+    "Finalizar com uma fatia de pera caramelizada sobre a taça"
+  ],
+  ingredientes: [
+    "Gin Tanqueray – 50 ml",
+    "Xarope de Pera – 40 ml",
+    "Mel – 20 g",
+    "Sumo de Limão Tahiti – 15 ml",
+    "Espumante Brut – 75 ml",
+    "Gelo em Esfera – 1 un",
+    "Gelo – 180 g",
+    "Pera Caramelizada – 1 fatia",
+    "Taça Coupe G – 1 un"
+  ]
+},
+
+{
+  nome: "True Light",
+  tipo: "Drink",
+  icon: "🍹",
+  preparo: [
+    "Resfriar previamente a mini taça coupe",
+    "Na coqueteleira, adicionar o gin infusionado, o limoncello, o xarope de açúcar e o sumo de limão siciliano",
+    "Adicionar gelo e bater por aproximadamente 15 segundos",
+    "Realizar filtragem dupla para a mini taça coupe",
+    "Finalizar com três gotas de óleo de alecrim sobre o drink"
+  ],
+  ingredientes: [
+    "Gin Infusionado (Capim Santo) – 50 ml",
+    "Limoncello – 30 ml",
+    "Xarope de Açúcar – 5 ml",
+    "Sumo de Limão Siciliano – 20 ml",
+    "Gelo – q.s.",
+    "Mini Taça Coupe – 1 un"
+  ]
+},
+
+{
+  nome: "Carajillo",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Preparar um espresso curto e deixar resfriar",
+    "Na coqueteleira, adicionar o licor 43 e o espresso",
+    "Adicionar gelo e bater até gelar",
+    "Realizar filtragem simples para o copo on the rocks",
+    "Finalizar com zest de laranja Bahia"
+  ],
+  ingredientes: [
+    "Licor 43 – 60 ml",
+    "Café Espresso – 1 un",
+    "Zest de Laranja Bahia – 1 un",
+    "Gelo Rocks 5x7 – 1 un",
+    "Gelo – 220 g",
+    "Copo On The Rocks – 1 un"
+  ]
+},
+
+{
+  nome: "Limoncello Spritz",
+  tipo: "Drink",
+  icon: "🍷",
+  preparo: [
+    "Na taça de spritz, adicionar gelo até ¾ da capacidade e mexer para resfriar",
+    "Descartar a água do resfriamento",
+    "Completar a taça com gelo",
+    "Adicionar os ingredientes na ordem: espumante, água com gás e limoncello",
+    "Finalizar com duas rodelas de limão siciliano cortadas ao meio"
+  ],
+  ingredientes: [
+    "Limoncello – 150 ml",
+    "Espumante Salton Brut – 150 ml",
+    "Água com Gás – 50 ml",
+    "Limão Siciliano – 50 g",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Taça Spritz – 1 un"
+  ]
+},
+
+{
+  nome: "Boulevardier",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Resfriar previamente o mixing glass e o copo de serviço com gelo",
+    "Descartar o gelo do mixing glass",
+    "Adicionar Jack Daniel’s, Campari e Martini Rosso",
+    "Completar com bastante gelo e mexer por 25 a 30 segundos",
+    "Descartar o gelo do copo de serviço e adicionar um gelo rocks translúcido carimbado",
+    "Realizar filtragem simples diretamente para o copo",
+    "Aromatizar com os óleos da casca de laranja Bahia",
+    "Finalizar com a casca de laranja como garnish"
+  ],
+  ingredientes: [
+    "Jack Daniel’s – 40 ml",
+    "Campari – 30 ml",
+    "Martini Rosso – 30 ml",
+    "Casca de Laranja Bahia – 30 g",
+    "Gelo – 200 g",
+    "Gelo Rocks 5x7 – 1 un",
+    "Copo On The Rocks – 1 un"
+  ]
+},
+
+{
+  nome: "Negroni Sbagliato",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Gelar previamente um copo on the rocks grande",
+    "Descartar a água do resfriamento e completar com gelo novo",
+    "Adicionar o vermouth e o campari",
+    "Mexer por aproximadamente 10 segundos",
+    "Completar o copo com espumante brut",
+    "Finalizar com zest de laranja Bahia"
+  ],
+  ingredientes: [
+    "Campari – 40 ml",
+    "Vermouth Rosso – 40 ml",
+    "Espumante Salton Brut – 150 ml",
+    "Zest de Laranja Bahia – 1 un",
+    "Gelo – q.s.",
+    "Copo On The Rocks – 1 un"
+  ]
+},
+
+{
+  nome: "Rabo de Galo",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Resfriar previamente o mixing glass",
+    "Descartar o gelo e adicionar Sagatiba, Cynar e Martini Rosso",
+    "Completar o mixing glass com bastante gelo e mexer por 25 a 30 segundos até atingir a diluição correta",
+    "Preparar o copo on the rocks com gelo rocks quadrado e carimbar o gelo por 5 segundos",
+    "Realizar filtragem simples para o copo",
+    "Aromatizar com twist de laranja",
+    "Finalizar com o gelo carimbado e o twist de laranja cortado em paralelas"
+  ],
+  ingredientes: [
+    "Sagatiba – 60 ml",
+    "Cynar – 15 ml",
+    "Martini Rosso – 20 ml",
+    "Angostura – 1 dash",
+    "Casca de Limão Tahiti – 30 g",
+    "Gelo – 200 g",
+    "Gelo Rocks 5x7 – 1 un",
+    "Copo On The Rocks – 1 un"
+  ]
+},
+
+{
+  nome: "Fitzgerald",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Na coqueteleira, adicionar gin, suco de limão siciliano, xarope simples e 1 dash de Angostura",
+    "Adicionar gelo e bater por aproximadamente 20 segundos",
+    "Realizar filtragem dupla para o copo on the rocks com gelo translúcido",
+    "Adicionar outros 2 dashes de Angostura em float",
+    "Mexer suavemente no sentido horário",
+    "Finalizar com zest de limão siciliano sobre o gelo"
+  ],
+  ingredientes: [
+    "Gin – 50 ml",
+    "Suco de Limão Siciliano – 20 ml",
+    "Xarope Simples – 15 ml",
+    "Angostura Bitter – 3 dashes",
+    "Limão Siciliano – 20 g",
+    "Gelo – 200 g",
+    "Copo On The Rocks – 1 un"
+  ]
+},
+
+{
+  nome: "Whiskey Sour",
+  tipo: "Drink",
+  icon: "🥃",
+  preparo: [
+    "Na coqueteleira, adicionar o whiskey, o suco de limão, o xarope simples e o foamer (clara de ovo ou aquafaba)",
+    "Realizar reverse dry shake: bater com 3 pedras de gelo por cerca de 50 segundos até diluir",
+    "Adicionar gelo novamente e bater por mais 15 segundos",
+    "Realizar filtragem dupla para o copo on the rocks",
+    "Adicionar Angostura Bitter sobre a espuma",
+    "Com auxílio de um maçarico, derreter levemente a camada central formando efeito brûlée"
+  ],
+  ingredientes: [
+    "Whiskey (Red Label ou Jack Daniel’s) – 60 ml",
+    "Suco de Limão – 25 ml",
+    "Xarope Simples – 25 ml",
+    "Foamer (ou clara de ovo / aquafaba) – 30 ml",
+    "Angostura Bitter – 2 ml",
+    "Gelo Rocks 5x7 – 1 un",
+    "Copo On The Rocks Cristal – 1 un"
+  ]
+},
+
+{
+  nome: "Batida de Maracujá",
+  tipo: "Drink",
+  icon: "🥭",
+  preparo: [
+    "Na coqueteleira, adicionar em ordem: creme de leite, leite condensado, vodka, polpa de maracujá e Monin de maracujá",
+    "Adicionar bastante gelo e bater por aproximadamente 30 segundos",
+    "Preparar a taça fazendo borda com pó de laranja e adicionar gelo novo",
+    "Realizar coagem simples e servir na taça preparada",
+    "Finalizar com canudo"
+  ],
+  ingredientes: [
+    "Vodka – 50 ml",
+    "Creme de Leite – 50 ml",
+    "Leite Condensado – 50 ml",
+    "Monin de Maracujá – 15 ml",
+    "Polpa de Maracujá – 70 g",
+    "Pó de Laranja – 1 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Taça Água Barone 490 – 1 un"
+  ]
+},
+
+{
+  nome: "Batida de Coco",
+  tipo: "Drink",
+  icon: "🥥",
+  preparo: [
+    "Na coqueteleira, adicionar em ordem: creme de leite, leite condensado, vodka e Malibu",
+    "Adicionar bastante gelo e bater por aproximadamente 30 segundos",
+    "Preparar a taça fazendo borda com coco queimado",
+    "Realizar coagem simples e servir na taça preparada",
+    "Finalizar com canudo"
+  ],
+  ingredientes: [
+    "Vodka – 50 ml",
+    "Malibu – 30 ml",
+    "Creme de Leite – 50 ml",
+    "Leite de Coco – 50 ml",
+    "Leite Condensado – 50 ml",
+    "Coco Queimado – 15 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Taça Água Barone 490 – 1 un"
+  ]
+},
+
+{
+  nome: "Batida de Abacaxi",
+  tipo: "Drink",
+  icon: "🍍",
+  preparo: [
+    "Na coqueteleira, adicionar em ordem: creme de leite, leite condensado, vodka e suco de abacaxi",
+    "Adicionar bastante gelo e bater por aproximadamente 30 segundos",
+    "Preparar a taça fazendo borda com coco queimado",
+    "Realizar coagem simples e servir na taça preparada",
+    "Finalizar com canudo"
+  ],
+  ingredientes: [
+    "Vodka – 50 ml",
+    "Suco de Abacaxi (Maguary) – 50 ml",
+    "Creme de Leite – 50 ml",
+    "Leite Condensado – 50 ml",
+    "Xarope Simples – 50 ml",
+    "Abacaxi Desidratado – 30 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Taça Água Barone 490 – 1 un"
+  ]
+},
+
+{
+  nome: "Batida de Morango",
+  tipo: "Drink",
+  icon: "🍓",
+  preparo: [
+    "Na coqueteleira, adicionar em ordem: creme de leite, leite condensado, vodka e Monin de morango",
+    "Adicionar bastante gelo e bater por aproximadamente 30 segundos",
+    "Preparar a taça fazendo borda com coco queimado",
+    "Realizar coagem simples e servir na taça preparada",
+    "Finalizar com canudo"
+  ],
+  ingredientes: [
+    "Vodka – 75 ml",
+    "Creme de Leite – 50 ml",
+    "Leite Condensado – 50 ml",
+    "Monin de Morango – 50 ml",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Taça Água Barone 490 – 1 un"
+  ]
+},
+
+{
+  nome: "Mandarina Colada",
+  tipo: "Drink",
+  icon: "🍊",
+  preparo: [
+    "Na coqueteleira, adicionar em ordem: creme de leite, leite condensado, leite de coco, xarope de tangerina e vodka",
+    "Adicionar gelo e bater por aproximadamente 15 segundos",
+    "Realizar filtragem simples para o copo bohemia com gelo",
+    "Finalizar com gomo de tangerina caramelizada no maçarico em espeto de metal"
+  ],
+  ingredientes: [
+    "Vodka – 50 ml",
+    "Creme de Leite – 50 ml",
+    "Leite Condensado – 30 ml",
+    "Leite de Coco – 40 ml",
+    "Monin de Tangerina – 20 ml",
+    "Tangerina – 103 g",
+    "Açúcar – 20 g",
+    "Pó de Laranja – 1 g",
+    "Gelo – 360 g",
+    "Gomo de Tangerina Caramelizado – 20 g",
+    "Canudo – 1 un",
+    "Copo Bohemia – 1 un"
+  ]
+},
+
+{
+  nome: "Gin Tônica",
+  tipo: "Drink",
+  icon: "🍸",
+  preparo: [
+    "Utilizar taça baloon",
+    "Adicionar uma fatia de pepino na parte interna da taça",
+    "Completar a taça com gelo",
+    "Adicionar duas meias-luas de limão siciliano e um ramo de alecrim",
+    "Adicionar o gin, completar com água tônica e mexer suavemente"
+  ],
+  ingredientes: [
+    "Gin – 50 ml",
+    "Água Tônica – 150 ml",
+    "Pepino Japonês – 70 g",
+    "Limão Siciliano – 50 g",
+    "Alecrim – 1 ramo",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Taça Gin (Baloon) – 1 un"
+  ]
+},
+
+{
+  nome: "Gin Tônica Morango",
+  tipo: "Drink",
+  icon: "🍓",
+  preparo: [
+    "Adicionar o gin e o sumo de limão na taça",
+    "Infusionar um sachê de chá de frutas vermelhas por 10 segundos",
+    "Completar a taça com gelo",
+    "Adicionar morangos cortados em fatias finas",
+    "Completar com água tônica",
+    "Servir 20 ml de xarope de morango em um copo de shot à parte"
+  ],
+  ingredientes: [
+    "Gin Tanqueray – 50 ml",
+    "Sumo de Limão – 25 ml",
+    "Chá de Frutas Vermelhas – 1 sachê",
+    "Morango – 100 g",
+    "Monin de Morango – 20 ml",
+    "Água Tônica – q.s.",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Taça Gin – 1 un"
+  ]
+},
+
+{
+  nome: "Gin Tônica Rosas",
+  tipo: "Drink",
+  icon: "🌹",
+  preparo: [
+    "Adicionar o gin e o sumo de limão na taça",
+    "Infusionar um sachê de chá de rosas e hibisco por 10 segundos",
+    "Completar a taça com gelo",
+    "Adicionar meia fatia de limão siciliano e três unidades de anis estrelado",
+    "Completar com água tônica",
+    "Servir 20 ml de xarope de rosas em um copo de shot à parte"
+  ],
+  ingredientes: [
+    "Gin – 50 ml",
+    "Sumo de Limão Siciliano – 50 ml",
+    "Chá de Rosas e Hibisco – 1 sachê",
+    "Anis Estrelado – 3 un",
+    "Monin de Rosas – 20 ml",
+    "Água Tônica – 150 ml",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Taça Gin – 1 un"
+  ]
+},
+
+{
+  nome: "Gin Tônica Tangerina",
+  tipo: "Drink",
+  icon: "🍊",
+  preparo: [
+    "Macerar um gomo de tangerina na taça baloon",
+    "Adicionar o gin e a redução de gengibre",
+    "Completar a taça com gelo",
+    "Adicionar três gomos de tangerina cortados ao meio",
+    "Adicionar um ramo de alecrim e uma colher de bar de pimenta rosa",
+    "Completar com água tônica",
+    "Servir 20 ml de xarope de tangerina em um copo de shot à parte"
+  ],
+  ingredientes: [
+    "Gin – 50 ml",
+    "Redução de Gengibre – 30 ml",
+    "Tangerina – 100 g",
+    "Monin de Tangerina – 20 ml",
+    "Pimenta Rosa – q.s.",
+    "Alecrim – 1 ramo",
+    "Água Tônica – 150 ml",
+    "Gelo – 180 g",
+    "Canudo – 1 un",
+    "Taça Gin – 1 un"
+  ]
+},
+
+/* ================= MOJITOS ================= */
+
+{
+  nome: "Mojito Tradicional",
+  tipo: "Drink",
+  icon: "🌿",
+  preparo: [
+    "Adicionar xarope e sumo de limão no copo long",
+    "Adicionar hortelã e limão",
+    "Completar com gelo",
+    "Adicionar rum e misturar suavemente",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Rum Branco – 50 ml",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Hortelã – 40 g",
+    "Gelo – 360 g"
+  ]
+},
+
+{
+  nome: "Mojito de Morango",
+  tipo: "Drink",
+  icon: "🍓",
+  preparo: [
+    "Adicionar xarope, limão e morangos",
+    "Macerar levemente",
+    "Adicionar rum, gelo e hortelã",
+    "Misturar suavemente",
+    "Finalizar com hortelã"
+  ],
+  ingredientes: [
+    "Rum Branco – 50 ml",
+    "Morangos – 4 un",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Hortelã – 40 g"
+  ]
+},
+
+{
+  nome: "Mojito de Maracujá",
+  tipo: "Drink",
+  icon: "🥭",
+  preparo: [
+    "Adicionar xarope, limão e maracujá",
+    "Macerar levemente",
+    "Adicionar rum, gelo e hortelã",
+    "Misturar suavemente"
+  ],
+  ingredientes: [
+    "Rum Branco – 50 ml",
+    "Polpa de Maracujá – 40 ml",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Hortelã – 40 g"
+  ]
+},
+
+{
+  nome: "Mojito de Kiwi",
+  tipo: "Drink",
+  icon: "🥝",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e cerca de meio kiwi",
+    "Macerar suavemente",
+    "Adicionar o rum",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda, misturar suavemente para incorporar os ingredientes",
+    "Completar o restante do copo após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Rum Bacardi Carta Branca – 50 ml",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Kiwi – 60 g",
+    "Açúcar – 10 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long Drink – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito de Manga",
+  tipo: "Drink",
+  icon: "🥭",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e cerca de um terço de manga",
+    "Macerar suavemente",
+    "Adicionar o rum",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente para incorporar",
+    "Completar o restante do copo após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Rum Bacardi Carta Branca – 50 ml",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Manga – 120 g",
+    "Açúcar – 20 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long Drink – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito de Frutas Vermelhas",
+  tipo: "Drink",
+  icon: "🍓",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e as frutas vermelhas",
+    "Macerar suavemente",
+    "Adicionar o rum",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente para incorporar",
+    "Completar o restante do copo após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Rum Bacardi Carta Branca – 50 ml",
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Morango – 40 g",
+    "Cereja – 30 g",
+    "Amora – 20 g",
+    "Açúcar – 20 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long Drink – 1 un"
+  ]
+},
+
+/* ================= CHÁS ================= */
+
+{
+  nome: "Chá Verde Importado",
+  tipo: "Chá",
+  icon: "🍵",
+  preparo: [
+    "Ferver a água no fogão de indução",
+    "Adicionar o chá verde importado",
+    "Infusionar por 2 minutos",
+    "Desligar o fogo e resfriar em temperatura ambiente",
+    "Filtrar e armazenar em garrafas plásticas próprias"
+  ],
+  ingredientes: [
+    "Chá Verde Importado – 20 g",
+    "Água – 800 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 750 ml",
+    "Validade: 15 dias",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+{
+  nome: "Chá de Hibisco",
+  tipo: "Chá",
+  icon: "🌺",
+  preparo: [
+    "Ferver a água no fogão de indução",
+    "Adicionar o chá de hibisco",
+    "Infusionar por 2 minutos",
+    "Desligar o fogo e resfriar em temperatura ambiente",
+    "Filtrar e armazenar em garrafas plásticas próprias"
+  ],
+  ingredientes: [
+    "Chá de Hibisco – 20 g",
+    "Água – 800 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 750 ml",
+    "Validade: 15 dias",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+{
+  nome: "Chá de Gengibre com Laranja",
+  tipo: "Chá",
+  icon: "🍊",
+  preparo: [
+    "Em um copo bistrol, adicionar 3/4 de gelo",
+    "Adicionar o chá verde, o suco de laranja e a redução de gengibre",
+    "Mexer suavemente apenas para incorporar os ingredientes"
+  ],
+  ingredientes: [
+    "Chá Verde – 100 ml",
+    "Suco de Laranja – 100 ml",
+    "Redução de Gengibre – 25 ml",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo de Suco – 1 un"
+  ]
+},
+
+{
+  nome: "Chá de Hibisco com Abacaxi",
+  tipo: "Chá",
+  icon: "🍍",
+  preparo: [
+    "Em um copo bistrol, adicionar 3/4 de gelo",
+    "Adicionar o chá de hibisco, o suco de abacaxi com hortelã e a redução de gengibre",
+    "Mexer suavemente apenas para incorporar os ingredientes"
+  ],
+  ingredientes: [
+    "Chá de Hibisco – 100 ml",
+    "Suco de Abacaxi com Hortelã – 100 ml",
+    "Redução de Gengibre – 25 ml",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo de Suco – 1 un"
+  ]
+},
+
+/* ================= SUCOS ================= */
+
+{
+  nome: "Suco de Laranja",
+  tipo: "Suco",
+  icon: "🍊",
+  preparo: [
+    "Espremer as laranjas até extrair todo o suco da polpa",
+    "Peneirar",
+    "Servir no copo conforme observações da comanda"
+  ],
+  ingredientes: [
+    "Laranja – 1 kg"
+  ],
+  observacoes: [
+    "Rendimento total: 450 ml"
+  ]
+},
+
+{
+  nome: "Suco de Abacaxi",
+  tipo: "Suco",
+  icon: "🍍",
+  preparo: [
+    "No copo do liquidificador, adicionar a polpa de abacaxi e 300 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar e servir"
+  ],
+  ingredientes: [
+    "Abacaxi – 250 g",
+    "Água – 400 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 450 ml"
+  ]
+},
+
+{
+  nome: "Suco de Abacaxi com Hortelã",
+  tipo: "Suco",
+  icon: "🌿",
+  preparo: [
+    "No copo do liquidificador, adicionar a polpa de abacaxi, dois ramos de hortelã e 300 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar e servir"
+  ],
+  ingredientes: [
+    "Abacaxi – 250 g",
+    "Hortelã – 2 ramos",
+    "Água – 400 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 450 ml"
+  ]
+},
+
+{
+  nome: "Suco de Abacaxi com Capim-Santo",
+  tipo: "Suco",
+  icon: "🌱",
+  preparo: [
+    "No copo do liquidificador, adicionar a polpa de abacaxi, um pouco de capim-santo e 300 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar e servir"
+  ],
+  ingredientes: [
+    "Abacaxi – 250 g",
+    "Capim-Santo – q.s.",
+    "Água – 400 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 450 ml"
+  ]
+},
+
+{
+  nome: "Suco de Manga",
+  tipo: "Suco",
+  icon: "🥭",
+  preparo: [
+    "No copo do liquidificador, adicionar a polpa de manga e 300 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar e servir"
+  ],
+  ingredientes: [
+    "Manga – 250 g",
+    "Água – 400 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 450 ml"
+  ]
+},
+
+{
+  nome: "Suco de Manga",
+  tipo: "Suco",
+  icon: "🥭",
+  preparo: [
+    "No copo do liquidificador, adicionar a polpa de manga e 300 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar e servir"
+  ],
+  ingredientes: [
+    "Manga – 250 g",
+    "Água – 400 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 450 ml"
+  ]
+},
+
+{
+  nome: "Suco de Limão",
+  tipo: "Suco",
+  icon: "🍋",
+  preparo: [
+    "Descascar o limão inteiro",
+    "No copo do liquidificador, adicionar a polpa e 400 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar e servir"
+  ],
+  ingredientes: [
+    "Limão – 150 g",
+    "Água – 400 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 400 ml"
+  ]
+},
+
+{
+  nome: "Limonada Suíça",
+  tipo: "Suco",
+  icon: "🍋",
+  preparo: [
+    "Cortar o limão em 4 partes",
+    "No copo do liquidificador, adicionar o limão e 300 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar, servir e completar o copo com água com gás"
+  ],
+  ingredientes: [
+    "Limão – 150 g",
+    "Água – 400 ml",
+    "Água com Gás – q.s."
+  ],
+  observacoes: [
+    "Rendimento total: 400 ml"
+  ]
+},
+
+{
+  nome: "Limonada Suíça com Leite Condensado",
+  tipo: "Suco",
+  icon: "🥛",
+  preparo: [
+    "Cortar o limão em 4 partes",
+    "No copo do liquidificador, adicionar o limão e 350 ml de água",
+    "Bater conforme observações da comanda (ex: com açúcar)",
+    "Se solicitado com gelo, adicionar 3 a 4 pedras antes de peneirar",
+    "Peneirar e servir"
+  ],
+  ingredientes: [
+    "Limão – 150 g",
+    "Água – 400 ml",
+    "Leite Condensado – q.s."
+  ],
+  observacoes: [
+    "Rendimento total: 400 ml"
+  ]
+},
+
+/* ================= BASE ================= */
+
+{
+  nome: "Pó de Limão",
+  tipo: "Base",
+  icon: "🍋",
+  preparo: [
+    "Descascar os limões utilizando descascador de inox",
+    "Levar as cascas ao desidratador ligado até estarem totalmente secas (aprox. 9 horas)",
+    "Com as cascas ainda quentes, bater no liquidificador até virar pó"
+  ],
+  ingredientes: [
+    "Limão Tahiti – 1 kg"
+  ],
+  observacoes: [
+    "Rendimento: 500 g de casca",
+    "Validade: 7 dias",
+    "Importante: cascas devem estar quentes para facilitar a trituração"
+  ]
+},
+
+{
+  nome: "Pó de Laranja",
+  tipo: "Base",
+  icon: "🍊",
+  preparo: [
+    "Descascar as laranjas utilizando descascador de inox",
+    "Levar as cascas ao desidratador ligado até estarem totalmente secas (aprox. 9 horas)",
+    "Com as cascas ainda quentes, bater no liquidificador até virar pó"
+  ],
+  ingredientes: [
+    "Laranja Bahia – 1,794 kg (aprox. 4 unidades)"
+  ],
+  observacoes: [
+    "Rendimento: 211 g de casca",
+    "Validade: 3 dias",
+    "Importante: cascas devem estar quentes para facilitar a trituração"
+  ]
+},
+
+{
+  nome: "Sumo de Limão",
+  tipo: "Base",
+  icon: "🍋",
+  preparo: [
+    "Espremer os limões",
+    "Peneirar o suco",
+    "Armazenar em garrafa de vidro"
+  ],
+  ingredientes: [
+    "Limão Tahiti – 1 kg"
+  ],
+  observacoes: [
+    "Rendimento total: 450 ml",
+    "Validade: até 12 horas",
+    "Observação: após aberto, utilizar em até 6 horas",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+{
+  nome: "Espuma de Gengibre (P)",
+  tipo: "Base",
+  icon: "🍋",
+  preparo: [
+    "No liquidificador, bater o sumo de limão, a redução de gengibre e o açúcar por 30 segundos",
+    "Em recipiente separado, dissolver o emulsificante em 50 ml de água quente até formar uma pasta",
+    "Adicionar a pasta ao liquidificador",
+    "Bater em velocidade baixa, aumentando gradualmente até dobrar de volume (aprox. 1 minuto)"
+  ],
+  ingredientes: [
+    "Redução de Gengibre – 100 ml",
+    "Sumo de Limão – 75 ml",
+    "Açúcar – 100 g",
+    "Emulsificante – 25 g",
+    "Cápsula CO₂ – 1 un"
+  ],
+  observacoes: [
+    "Sifão: Pequeno",
+    "Armazenagem: Refrigerado",
+    "Rendimento total: 300 g",
+    "Validade: 7 dias"
+  ]
+},
+
+{
+  nome: "Redução de Gengibre",
+  tipo: "Base",
+  icon: "🫚",
+  preparo: [
+    "Descascar o gengibre e cortar em tiras finas",
+    "No liquidificador, adicionar a água e o açúcar e bater por 40 segundos",
+    "Acrescentar o gengibre cortado e bater por mais 30 segundos",
+    "Filtrar utilizando filtro de inox",
+    "Armazenar em garrafa de vidro identificada com data de validade (7 dias)"
+  ],
+  ingredientes: [
+    "Gengibre – 350 g",
+    "Água – 400 ml",
+    "Açúcar – 300 g"
+  ],
+  observacoes: [
+    "Armazenagem: Refrigerado",
+    "Rendimento total: 750 ml",
+    "Validade: 7 dias"
+  ]
+},
+
+{
+  nome: "Redução de Pêssego",
+  tipo: "Base",
+  icon: "🍑",
+  preparo: [
+    "Adicionar o pêssego, a vodka, o xarope de açúcar e o gelo no liquidificador",
+    "Bater em alta velocidade até homogenizar",
+    "Peneirar antes de armazenar"
+  ],
+  ingredientes: [
+    "Pêssego – 200 g",
+    "Vodka – 100 ml",
+    "Xarope de Açúcar – 100 ml",
+    "Gelo – 180 g"
+  ],
+  observacoes: [
+    "Porção padrão para redução: 85 a 100 g de fruta e 75 ml de calda",
+    "Rendimento total: 500 ml",
+    "Validade: 7 dias",
+    "Armazenagem: Refrigerado"
+  ]
+},
+{
+  nome: "Limoncello",
+  tipo: "Base",
+  icon: "🍋",
+  preparo: [
+    "Descascar o limão siciliano evitando a parte branca",
+    "Se necessário, retirar o excesso da parte branca com faca plana",
+    "Cortar as cascas em pedaços pequenos para facilitar a extração dos óleos essenciais",
+    "Colocar as cascas em saco a vácuo com vodka ou álcool neutro",
+    "Deixar em infusão de 7 a 15 dias, agitando diariamente",
+    "Após a infusão, adicionar a mesma quantidade do líquido restante de xarope simples",
+    "Armazenar e consumir após 48 horas"
+  ],
+  ingredientes: [
+    "Limão Siciliano – 1.200 g",
+    "Vodka ou Álcool Neutro – q.s.",
+    "Xarope Simples – mesma quantidade do líquido"
+  ],
+  observacoes: [
+    "Infusão: 7 a 15 dias",
+    "Descanso após mistura: 48 horas",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+{
+  nome: "Gin Infusionado de Capim Santo",
+  tipo: "Base",
+  icon: "🌾",
+  preparo: [
+    "Deixar o capim santo desidratar completamente",
+    "Adicionar o capim santo desidratado ao gin",
+    "Deixar em infusão por 48 horas",
+    "Filtrar, armazenar e etiquetar corretamente"
+  ],
+  ingredientes: [
+    "Gin Tanqueray – 100 ml",
+    "Capim Santo – 25 g"
+  ],
+  observacoes: [
+    "Validade: 20 dias",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+{
+  nome: "Infusão de Tangerina, Zimbro e Cardamomo",
+  tipo: "Base",
+  icon: "🍊",
+  preparo: [
+    "Descascar tangerinas até obter 100 g de casca",
+    "Ferver a água",
+    "Adicionar as cascas de tangerina, zimbro e cardamomo",
+    "Ferver por 2 minutos para extrair sabor",
+    "Resfriar em temperatura ambiente",
+    "Armazenar e selar a vácuo por 48 horas",
+    "Filtrar com coador de inox"
+  ],
+  ingredientes: [
+    "Casca de Tangerina – 100 g",
+    "Zimbro – 100 un",
+    "Cardamomo – 25 un",
+    "Água – 500 ml"
+  ],
+  observacoes: [
+    "Rendimento final: 400 ml",
+    "Validade: 20 dias",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+
+/* ================= XAROPE ================= */
+
+{
+  nome: "Xarope Simples 1:1",
+  tipo: "Base",
+  icon: "🍯",
+  preparo: [
+    "Adicionar o açúcar e a água no liquidificador",
+    "Bater até dissolver completamente",
+    "Verificar a capacidade do liquidificador e, se necessário, dividir a receita em duas partes"
+  ],
+  ingredientes: [
+    "Açúcar – 1 kg",
+    "Água – 1.000 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 1.400 ml",
+    "Validade: 7 dias",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+{
+  nome: "Xarope de Pimenta",
+  tipo: "Base",
+  icon: "🌶️",
+  preparo: [
+    "Cortar a pimenta dedo-de-moça sem sementes em pedaços pequenos",
+    "Adicionar a pimenta e o açúcar em um saco a vácuo em partes iguais",
+    "Selar o saco e deixar em infusão por 48 horas",
+    "Filtrar utilizando coador de metal ou filtro de café"
+  ],
+  ingredientes: [
+    "Açúcar – 160 g",
+    "Pimenta Dedo-de-Moça – 160 g",
+    "Filtro de Café – 3 un"
+  ],
+  observacoes: [
+    "Rendimento total: 140 ml",
+    "Validade: 7 dias",
+    "Armazenagem: Refrigerado"
+  ]
+},
+
+{
+  nome: "Xarope de Pera",
+  tipo: "Base",
+  icon: "🍐",
+  preparo: [
+    "Descascar e cortar a pera em pedaços médios",
+    "Adicionar a pera e a água no liquidificador",
+    "Bater até obter uma mistura homogênea",
+    "Peneirar antes de armazenar",
+    "Armazenar refrigerado em recipiente identificado"
+  ],
+  ingredientes: [
+    "Pera – 100 g",
+    "Água – 50 ml"
+  ],
+  observacoes: [
+    "Rendimento total: 750 ml",
+    "Armazenagem: Refrigerado",
+    "Validade: conforme controle interno"
+  ]
+},
+
+/* ================= SEM ALCOOL ================= */
+
+{
+  nome: "Piña Colada Sem Álcool",
+  tipo: "Drink Sem Álcool",
+  icon: "🥥",
+  preparo: [
+    "Na coqueteleira, adicionar em ordem: leite de coco, leite condensado e suco de abacaxi",
+    "Preparar a borda da taça escandinava passando no leite condensado e depois no coco queimado",
+    "Adicionar bastante gelo na coqueteleira e bater vigorosamente",
+    "Adicionar gelo novo na taça preparada",
+    "Filtrar a mistura diretamente na taça",
+    "Finalizar com triângulo de abacaxi"
+  ],
+  ingredientes: [
+    "Suco de Abacaxi (Maguary) – 150 ml",
+    "Leite de Coco – 50 ml",
+    "Leite Condensado – 50 ml",
+    "Abacaxi (decoração) – 70 g",
+    "Coco Queimado – 10 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Taça Escandinava – 1 un"
+  ]
+},
+
+{
+  nome: "Moscow Mule Sem Álcool",
+  tipo: "Drink Sem Álcool",
+  icon: "🍺",
+  preparo: [
+    "Posicionar a caneca de cobre previamente gelada",
+    "Adicionar o sumo de limão",
+    "Adicionar a redução de gengibre e o xarope de açúcar",
+    "Completar a caneca com gelo até formar um pequeno domo",
+    "Completar com água com gás até 0,5–1 cm abaixo da borda",
+    "Misturar suavemente com a bailarina",
+    "Adicionar a espuma de gengibre em formato de cone",
+    "Polvilhar pó de limão sobre a espuma",
+    "Inserir fatia de limão desidratado e canudo",
+    "Limpar a borda e a parte externa da caneca"
+  ],
+  ingredientes: [
+    "Redução de Gengibre – 60 ml",
+    "Sumo de Limão – 40 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Água com Gás – q.s.",
+    "Espuma de Gengibre – 150 g",
+    "Pó de Limão Tahiti – 2 g",
+    "Limão Desidratado – 20 g",
+    "Gelo – 150 g",
+    "Canudo – 1 un",
+    "Caneca de Cobre – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito",
+  tipo: "Drink Sem Álcool",
+  icon: "🌿",
+  preparo: [
+    "No copo long, adicionar xarope simples e sumo de limão",
+    "Completar com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente",
+    "Completar o restante após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Hortelã – 40 g",
+    "Limão – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito de Morango",
+  tipo: "Drink Sem Álcool",
+  icon: "🍓",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e cerca de 4 morangos médios",
+    "Macerar suavemente",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente para incorporar",
+    "Completar o restante após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Morango – 60 g",
+    "Açúcar – 20 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito de Maracujá",
+  tipo: "Drink Sem Álcool",
+  icon: "🥭",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e cerca de 40 ml de maracujá",
+    "Macerar suavemente",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente para incorporar",
+    "Completar o restante após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Maracujá – 80 g",
+    "Açúcar – 10 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito de Kiwi",
+  tipo: "Drink Sem Álcool",
+  icon: "🥝",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e cerca de meio kiwi",
+    "Macerar suavemente",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente para incorporar",
+    "Completar o restante após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Kiwi – 60 g",
+    "Açúcar – 10 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito de Manga",
+  tipo: "Drink Sem Álcool",
+  icon: "🥭",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e cerca de um terço de manga",
+    "Macerar suavemente",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente para incorporar",
+    "Completar o restante após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Manga – 120 g",
+    "Açúcar – 20 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long – 1 un"
+  ]
+},
+
+{
+  nome: "Mojito de Frutas Vermelhas",
+  tipo: "Drink Sem Álcool",
+  icon: "🍒",
+  preparo: [
+    "No copo long, adicionar em ordem: xarope simples, sumo de limão e as frutas vermelhas",
+    "Macerar suavemente",
+    "Completar o copo com gelo",
+    "Adicionar hortelã e duas fatias de limão cortadas em cruz",
+    "Completar quase até a borda e misturar suavemente para incorporar",
+    "Completar o restante após mexer",
+    "Finalizar com ramo de hortelã"
+  ],
+  ingredientes: [
+    "Sumo de Limão – 30 ml",
+    "Xarope de Açúcar – 30 ml",
+    "Morango – 40 g",
+    "Cereja – 30 g",
+    "Amora – 20 g",
+    "Açúcar – 20 g",
+    "Hortelã – 40 g",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Copo Long – 1 un"
+  ]
+},
+
+{
+  nome: "Orange Coffee",
+  tipo: "Drink Sem Álcool",
+  icon: "☕",
+  preparo: [
+    "Tirar um espresso e deixar resfriar",
+    "Em um copo long, adicionar o café e o xarope simples",
+    "Completar o copo com gelo",
+    "Adicionar o suco de laranja",
+    "No mini tin, bater gelo com o macerador para triturar",
+    "Adicionar o gelo triturado no topo",
+    "Finalizar com duas meias-luas de laranja desidratada e um ramo de alecrim"
+  ],
+  ingredientes: [
+    "Espresso – 30 ml",
+    "Suco de Laranja – 100 ml",
+    "Xarope Simples – 15 g",
+    "Gelo – 360 g",
+    "Laranja Desidratada – 2 fatias",
+    "Alecrim – 1 ramo",
+    "Canudo – 1 un",
+    "Copo Long G – 1 un"
+  ]
+},
+
+{
+  nome: "The White Lady",
+  tipo: "Drink Sem Álcool",
+  icon: "🤍",
+  preparo: [
+    "Na coqueteleira, adicionar todos os ingredientes",
+    "Realizar reverse dry shake batendo com três pedras de gelo por 40 segundos",
+    "Abrir a coqueteleira e bater novamente com gelo para resfriar",
+    "Realizar filtragem dupla para taça coupe grande",
+    "Finalizar com dois gomos de laranja em espeto de inox"
+  ],
+  ingredientes: [
+    "Infusão de Tangerina, Zimbro e Cardamomo – 60 ml",
+    "Sumo de Limão – 30 ml",
+    "Monin de Tangerina – 25 g",
+    "Clara de Ovo – 30 ml",
+    "Gelo – 360 g",
+    "Canudo – 1 un",
+    "Taça Coupe G – 1 un"
+  ]
+}
+
+];
+
+/* ELEMENTOS */
+const lista = document.getElementById("lista");
+const busca = document.getElementById("busca");
+
+/* RENDER */
+function render(filtro = "") {
+  lista.innerHTML = "";
+
+  receitas
+    .filter(r => r.nome.toLowerCase().includes(filtro.toLowerCase()))
+    .forEach(r => {
+      const div = document.createElement("div");
+      div.className = "card";
+
+      div.innerHTML = `
+        <div class="nome">${r.nome}</div>
+        <div class="tipo">${r.tipo}</div>
+
+        <div class="grid">
+          <div class="col">
+            <h4>Modo de Preparo</h4>
+            <ol>${r.preparo.map(p => `<li>${p}</li>`).join("")}</ol>
+          </div>
+
+          <div class="col">
+            <h4>Ingredientes</h4>
+            <ul>${r.ingredientes.map(i => `<li>${i}</li>`).join("")}</ul>
+          </div>
+
+          <div class="visual">${r.icon}</div>
+        </div>
+      `;
+
+      lista.appendChild(div);
+    });
+}
+
+busca.oninput = e => render(e.target.value);
+render();
+</script>
+
+</body>
+</html>
