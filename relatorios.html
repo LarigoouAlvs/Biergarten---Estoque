@@ -62,18 +62,7 @@ button {
   cursor: pointer;
 }
 
-.registro {
-  background: var(--preto80);
-  border-left: 6px solid var(--amarelo);
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-}
-
-.registro small {
-  color: #ccc;
-}
-  .tabela {
+.tabela {
   width: 100%;
   border-collapse: collapse;
   background: var(--preto80);
@@ -99,7 +88,6 @@ button {
   color: #ff5252;
   font-weight: bold;
 }
-
 </style>
 </head>
 
@@ -117,7 +105,6 @@ button {
 
 <div id="lista"></div>
 
-<!-- 🔥 FIREBASE + RELATÓRIO -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -144,8 +131,12 @@ const db = getFirestore(app);
 /* ELEMENTOS */
 const lista = document.getElementById("lista");
 const mesInput = document.getElementById("mes");
+const btnPdf = document.getElementById("btnPdf");
 
-/* BUSCAR DADOS */
+/* ESTADO */
+let dadosRelatorio = [];
+
+/* 🔎 CARREGAR DADOS */
 async function carregarDados() {
   lista.innerHTML = "Carregando...";
 
@@ -155,29 +146,52 @@ async function carregarDados() {
   );
 
   const snapshot = await getDocs(q);
-
   const linhas = [];
 
   snapshot.forEach(doc => {
     const mov = doc.data();
-    const data = mov.data.toDate().toLocaleDateString();
+    const dataObj = mov.data.toDate();
+    const dataFormatada = dataObj.toLocaleDateString("pt-BR");
 
     mov.itens.forEach(item => {
       linhas.push({
-  data,
-  colaborador: mov.colaborador || "-",
-  produto: item.produto,
-  entrada: mov.tipo === "entrada" ? item.quantidade : "",
-  saida: mov.tipo === "saida" ? item.quantidade : ""
+        dataObj,
+        data: dataFormatada,
+        colaborador: mov.colaborador || "-",
+        produto: item.produto,
+        entrada: mov.tipo === "entrada" ? item.quantidade : "",
+        saida: mov.tipo === "saida" ? item.quantidade : ""
       });
     });
   });
 
-  render(linhas);
+  dadosRelatorio = linhas;
+  aplicarFiltro();
 }
 
-/* RENDER PLANILHA */
+/* 📆 FILTRO POR MÊS */
+function aplicarFiltro() {
+  const mesSelecionado = mesInput.value;
+  let filtrados = dadosRelatorio;
+
+  if (mesSelecionado) {
+    const [ano, mes] = mesSelecionado.split("-");
+    filtrados = dadosRelatorio.filter(l =>
+      l.dataObj.getFullYear() == ano &&
+      l.dataObj.getMonth() + 1 == mes
+    );
+  }
+
+  render(filtrados);
+}
+
+/* 🖥️ RENDER */
 function render(linhas) {
+  if (!linhas.length) {
+    lista.innerHTML = "Nenhum registro encontrado.";
+    return;
+  }
+
   lista.innerHTML = `
     <table class="tabela">
       <thead>
@@ -204,11 +218,58 @@ function render(linhas) {
   `;
 }
 
+/* 📄 EXPORTAR PDF */
+btnPdf.onclick = () => {
+  if (!lista.querySelector("table")) {
+    alert("Nada para exportar.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("p", "mm", "a4");
+
+  doc.setFontSize(14);
+  doc.text("Relatório de Movimentações - Biergarten", 14, 15);
+
+  let y = 25;
+
+  doc.setFontSize(10);
+  doc.text("Data", 14, y);
+  doc.text("Colaborador", 40, y);
+  doc.text("Produto", 90, y);
+  doc.text("Entrada", 140, y);
+  doc.text("Saída", 165, y);
+
+  y += 6;
+
+  const linhas = lista.querySelectorAll("tbody tr");
+
+  linhas.forEach(tr => {
+    const cols = tr.querySelectorAll("td");
+
+    if (y > 280) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.text(cols[0].innerText, 14, y);
+    doc.text(cols[1].innerText, 40, y);
+    doc.text(cols[2].innerText, 90, y);
+    doc.text(cols[3].innerText, 145, y);
+    doc.text(cols[4].innerText, 170, y);
+
+    y += 6;
+  });
+
+  doc.save("relatorio-biergarten.pdf");
+};
+
+/* EVENTOS */
+mesInput.onchange = aplicarFiltro;
+
+/* INIT */
 carregarDados();
 </script>
 
-
 </body>
 </html>
-
-
