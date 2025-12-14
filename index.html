@@ -43,6 +43,24 @@ header a {
   text-decoration: none;
   font-weight: bold;
 }
+  .acoes-topo {
+  display: flex;
+  gap: 10px;
+}
+
+.acoes-topo a {
+  background: var(--amarelo);
+  color: #000;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.acoes-topo a:hover {
+  opacity: 0.9;
+}
+
 
 input, select, button {
   width: 100%;
@@ -129,8 +147,13 @@ input, select, button {
 
 <header>
   <h1>🍺 Biergarten</h1>
-  <a href="relatorios.html">📊 Relatórios</a>
+
+  <div class="acoes-topo">
+    <a href="relatorios.html">📊 Relatórios</a>
+    <a href="hortifruti.html">🥬 Hortifrúti</a>
+  </div>
 </header>
+
 
 <input type="text" id="busca" placeholder="🔍 Buscar produto...">
 <div id="lista"></div>
@@ -306,6 +329,7 @@ atualizarResumo();
 
 </body>
 </html>
+
 
 
 
