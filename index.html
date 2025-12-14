@@ -101,31 +101,27 @@ input, select, button {
 
 #itens li {
   display: flex;
-  align-items: center;        /* 🔑 ALINHAMENTO REAL */
-  justify-content: space-between;
-  padding: 4px 0;             /* 🔽 reduz altura */
-  line-height: 1.2;           /* 🔽 remove “espaço invisível” */
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
 }
 
 .texto-item {
-  white-space: nowrap;        /* 🔑 NÃO QUEBRA LINHA */
-  overflow: hidden;
-  text-overflow: ellipsis;    /* corta se for muito longo */
+  flex: 1;               /* 🔑 ocupa o espaço disponível */
+  white-space: nowrap;   /* 🔑 não quebra linha */
 }
 
 .lixeira {
+  flex-shrink: 0;        /* 🔑 nunca encolhe */
   background: none;
   border: none;
   font-size: 14px;
   cursor: pointer;
   color: #ff4d4d;
   padding: 0;
-  line-height: 1;             /* 🔑 REMOVE DESALINHAMENTO */
-  display: flex;
-  align-items: center;
+  line-height: 1;
 }
-
-  
+ 
 </style>
 </head>
 
@@ -302,6 +298,7 @@ atualizarResumo();
 
 </body>
 </html>
+
 
 
 
