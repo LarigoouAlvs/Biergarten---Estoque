@@ -7,97 +7,149 @@
   <title>Biergarten | Relatórios</title>
 
   <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-      deleteDoc,
-      doc
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+ <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
-      authDomain: "biergarten-f5756.firebaseapp.com",
-      projectId: "biergarten-f5756",
-      storageBucket: "biergarten-f5756.firebasestorage.app",
-      messagingSenderId: "391344176716",
-      appId: "1:391344176716:web:db69d2b7d99fca2a377ee9"
-    };
+/* 🔧 CONFIG FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
+  authDomain: "biergarten-f5756.firebaseapp.com",
+  projectId: "biergarten-f5756",
+  storageBucket: "biergarten-f5756.firebasestorage.app",
+  messagingSenderId: "391344176716",
+  appId: "1:391344176716:web:db69d2b7d99fca2a377ee9"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    const lista = document.getElementById("lista");
-    const filtroMes = document.getElementById("mes");
+/* 📦 PRODUTOS */
+const produtos = [
+  "Coca-Cola",
+  "Coca Zero",
+  "Fanta",
+  "Sprite",
+  "Red Bull",
+  "Stella",
+  "Stella Gold",
+  "Água sem gás",
+  "Água com gás"
+];
 
-    let dados = [];
+/* 🧠 ESTADO */
+let selecionados = JSON.parse(localStorage.getItem("temporario")) || [];
 
-    async function carregar() {
-      lista.innerHTML = "";
-      dados = [];
+/* 🔗 ELEMENTOS */
+const lista = document.getElementById("lista");
+const busca = document.getElementById("busca");
+const resumo = document.getElementById("resumo");
+const itens = document.getElementById("itens");
+const tipo = document.getElementById("tipo");
+const colaborador = document.getElementById("colaborador");
+const finalizar = document.getElementById("finalizar");
 
-      const snap = await getDocs(collection(db, "movimentacoes"));
-      snap.forEach(d => {
-        dados.push({ id: d.id, ...d.data() });
-      });
+/* 🖥️ RENDER */
+function render(filtro = "") {
+  lista.innerHTML = "";
 
-      render();
-    }
+  produtos
+    .filter(p => p.toLowerCase().includes(filtro.toLowerCase()))
+    .forEach(produto => {
+      const qtd = selecionados.find(i => i.produto === produto)?.quantidade || 0;
 
-    function render() {
-      lista.innerHTML = "";
+      const div = document.createElement("div");
+      div.className = "produto";
+      div.innerHTML = `
+        <span>${produto}</span>
+        <div class="botoes">
+          <button onclick="add('${produto}',1)">+1</button>
+          <button onclick="add('${produto}',6)">+6</button>
+          <button onclick="add('${produto}',12)">+12</button>
+          <span class="contador">${qtd}</span>
+        </div>
+      `;
+      lista.appendChild(div);
+    });
+}
 
-      const mesSelecionado = filtroMes.value;
+/* ➕ ADD */
+window.add = function(produto, qtd) {
+  const item = selecionados.find(i => i.produto === produto);
+  if (item) item.quantidade += qtd;
+  else selecionados.push({ produto, quantidade: qtd });
 
-      dados
-        .filter(r => {
-          if (!mesSelecionado) return true;
-          const data = r.data.toDate();
-          return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}` === mesSelecionado;
-        })
-        .sort((a, b) => b.data.seconds - a.data.seconds)
-        .forEach(r => {
-          const div = document.createElement("div");
-          div.className = "registro";
+  salvarTemp();
+  atualizarResumo();
+  render(busca.value);
+};
 
-          div.innerHTML = `
-            <div>
-              <strong>${r.tipo.toUpperCase()}</strong> — ${r.colaborador}<br>
-              <small>${r.data.toDate().toLocaleString()}</small><br>
-              ${r.itens.map(i => `${i.produto} (${i.quantidade})`).join(", ")}
-            </div>
-            <button class="lixeira">🗑️</button>
-          `;
+/* 🗑️ REMOVER */
+window.remover = function(produto) {
+  selecionados = selecionados.filter(i => i.produto !== produto);
+  salvarTemp();
+  atualizarResumo();
+  render(busca.value);
+};
 
-          div.querySelector("button").onclick = async () => {
-            if (confirm("Excluir este registro?")) {
-              await deleteDoc(doc(db, "movimentacoes", r.id));
-              carregar();
-            }
-          };
+/* 📋 RESUMO */
+function atualizarResumo() {
+  itens.innerHTML = "";
+  resumo.classList.toggle("hidden", selecionados.length === 0);
 
-          lista.appendChild(div);
-        });
-    }
+  selecionados.forEach(i => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${i.quantidade} x ${i.produto}
+      <button onclick="remover('${i.produto}')">🗑️</button>
+    `;
+    itens.appendChild(li);
+  });
 
-    function exportarCSV() {
-      let csv = "Tipo,Colaborador,Data,Itens\n";
-      dados.forEach(r => {
-        csv += `${r.tipo},${r.colaborador},${r.data.toDate().toLocaleString()},"${r.itens.map(i => i.produto + ' ' + i.quantidade).join(' | ')}"\n`;
-      });
+  validar();
+}
 
-      const blob = new Blob([csv], { type: "text/csv" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "relatorio_biergarten.csv";
-      link.click();
-    }
+function validar() {
+  finalizar.disabled = !(tipo.value && colaborador.value && selecionados.length);
+}
 
-    window.onload = carregar;
-    window.exportarCSV = exportarCSV;
-  </script>
+function salvarTemp() {
+  localStorage.setItem("temporario", JSON.stringify(selecionados));
+}
+
+/* 🚀 SALVAR NO FIREBASE */
+finalizar.onclick = async () => {
+  await addDoc(collection(db, "movimentacoes"), {
+    tipo: tipo.value,
+    colaborador: colaborador.value,
+    data: new Date(),
+    itens: selecionados
+  });
+
+  localStorage.removeItem("temporario");
+
+  alert("Movimentação salva no Firebase 🔥");
+
+  selecionados = [];
+  tipo.value = "";
+  colaborador.value = "";
+  resumo.classList.add("hidden");
+  render();
+};
+
+/* 🔍 EVENTOS */
+busca.oninput = e => render(e.target.value);
+tipo.onchange = validar;
+colaborador.onchange = validar;
+
+render();
+atualizarResumo();
+</script>
+
 
   <style>
     body {
@@ -260,3 +312,4 @@
 
 </body>
 </html>
+
