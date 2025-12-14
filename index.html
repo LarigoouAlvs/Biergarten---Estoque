@@ -91,26 +91,40 @@ input, select, button {
 #finalizar:disabled {
   background: #777;
   cursor: not-allowed;
+
 }
-  #itens li {
+  #itens {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#itens li {
   display: flex;
+  align-items: center;        /* 🔑 ALINHAMENTO REAL */
   justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  padding: 4px 0;             /* 🔽 reduz altura */
+  line-height: 1.2;           /* 🔽 remove “espaço invisível” */
+}
+
+.texto-item {
+  white-space: nowrap;        /* 🔑 NÃO QUEBRA LINHA */
+  overflow: hidden;
+  text-overflow: ellipsis;    /* corta se for muito longo */
 }
 
 .lixeira {
   background: none;
   border: none;
-  font-size: 14px;      /* 🔽 menor */
+  font-size: 14px;
   cursor: pointer;
   color: #ff4d4d;
   padding: 0;
+  line-height: 1;             /* 🔑 REMOVE DESALINHAMENTO */
+  display: flex;
+  align-items: center;
 }
 
-.lixeira:hover {
-  opacity: 0.7;
-}
   
 </style>
 </head>
@@ -288,5 +302,6 @@ atualizarResumo();
 
 </body>
 </html>
+
 
 
