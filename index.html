@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Biergarten | Controle de Estoque</title>
+
+<style>
+:root {
+  --amarelo: #F4C430; /* Pantone 1225 C aproximado */
+  --preto: #1a1a1a;
+  --preto80: #262626;
+  --cinza: #e0e0e0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--preto);
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--amarelo);
+}
+
+header a {
+  background: var(--amarelo);
+  color: #000;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+header a:hover {
+  opacity: 0.9;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+}
+
+input {
+  background: #fff;
+}
+
+select {
+  background: #fff;
+}
+
+.produto {
+  background: var(--preto80);
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 6px solid var(--amarelo);
+}
+
+.produto span {
+  font-weight: bold;
+}
+
+.botoes button {
+  margin-left: 6px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add1 { background: #555; color: #fff; }
+.add6 { background: var(--amarelo); color: #000; }
+.add12 { background: #ffdf70; color: #000; }
+
+.contador {
+  font-weight: bold;
+  margin-left: 10px;
+  color: var(--amarelo);
+}
+
+#resumo {
+  background: var(--preto80);
+  padding: 18px;
+  margin-top: 25px;
+  border-radius: 10px;
+  border-top: 4px solid var(--amarelo);
+}
+
+#resumo h3 {
+  margin-top: 0;
+  color: var(--amarelo);
+}
+
+#resumo ul {
+  list-style: none;
+  padding: 0;
+}
+
+#resumo li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+#resumo li button {
+  background: transparent;
+  border: none;
+  color: #ff4d4d;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#finalizar {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  font-size: 16px;
+  background: var(--amarelo);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#finalizar:disabled {
+  background: #777;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+
+  body {
+    padding: 12px;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  header a {
+    width: 100%;
+    text-align: center;
+  }
+
+  input {
+    font-size: 18px;
+  }
+
+  .produto {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .botoes {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .botoes button {
+    flex: 1;
+    margin: 0 4px;
+    padding: 14px 0;
+    font-size: 16px;
+  }
+
+  .contador {
+    min-width: 40px;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  #resumo {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border-radius: 12px 12px 0 0;
+    max-height: 60vh;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  #finalizar {
+    font-size: 18px;
+    padding: 16px;
+  }
+
+  select {
+    font-size: 18px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🍺 Biergarten</h1>
+  <a href="relatorios.html">📊 Relatórios</a>
+</header>
+
+<input type="text" id="busca" placeholder="🔍 Buscar produto...">
+
+<div id="lista"></div>
+
+<div id="resumo" class="hidden">
+  <h3>Resumo da Movimentação</h3>
+  <ul id="itens"></ul>
+
+  <select id="tipo">
+    <option value="">Tipo de movimentação</option>
+    <option value="entrada">Entrada</option>
+    <option value="saida">Saída</option>
+  </select>
+
+  <select id="colaborador">
+    <option value="">Colaborador</option>
+    <option>Daniel</option>
+    <option>Larissa</option>
+    <option>Samuel</option>
+    <option>Alisson</option>
+  </select>
+
+  <button id="finalizar" disabled>Finalizar Movimentação</button>
+</div>
+
+<script>
+const produtos = [
+  "Coca-Cola",
+  "Coca Zero",
+  "Fanta",
+  "Sprite",
+  "Red Bull",
+  "Stella",
+  "Stella Gold",
+  "Água sem gás",
+  "Água com gás"
+];
+
+let selecionados = JSON.parse(localStorage.getItem("temporario")) || [];
+
+const lista = document.getElementById("lista");
+const busca = document.getElementById("busca");
+const resumo = document.getElementById("resumo");
+const itens = document.getElementById("itens");
+const tipo = document.getElementById("tipo");
+const colaborador = document.getElementById("colaborador");
+const finalizar = document.getElementById("finalizar");
+
+function render(filtro = "") {
+  lista.innerHTML = "";
+
+  produtos
+    .filter(p => p.toLowerCase().includes(filtro.toLowerCase()))
+    .forEach(produto => {
+      const qtd = selecionados.find(i => i.produto === produto)?.quantidade || 0;
+
+      const div = document.createElement("div");
+      div.className = "produto";
+      div.innerHTML = `
+        <span>${produto}</span>
+        <div class="botoes">
+          <button class="add1" onclick="add('${produto}',1)">+1</button>
+          <button class="add6" onclick="add('${produto}',6)">+6</button>
+          <button class="add12" onclick="add('${produto}',12)">+12</button>
+          <span class="contador">${qtd}</span>
+        </div>
+      `;
+      lista.appendChild(div);
+    });
+}
+
+function add(produto, qtd) {
+  const item = selecionados.find(i => i.produto === produto);
+  if (item) item.quantidade += qtd;
+  else selecionados.push({ produto, quantidade: qtd });
+
+  salvarTemp();
+  atualizarResumo();
+  render(busca.value);
+}
+
+function remover(produto) {
+  selecionados = selecionados.filter(i => i.produto !== produto);
+  salvarTemp();
+  atualizarResumo();
+  render(busca.value);
+}
+
+function atualizarResumo() {
+  itens.innerHTML = "";
+  resumo.classList.toggle("hidden", selecionados.length === 0);
+
+  selecionados.forEach(i => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${i.quantidade} x ${i.produto}
+      <button onclick="remover('${i.produto}')">🗑️</button>
+    `;
+    itens.appendChild(li);
+  });
+
+  validar();
+}
+
+function validar() {
+  finalizar.disabled = !(tipo.value && colaborador.value && selecionados.length);
+}
+
+function salvarTemp() {
+  localStorage.setItem("temporario", JSON.stringify(selecionados));
+}
+
+finalizar.onclick = () => {
+  localStorage.removeItem("temporario");
+  alert("Movimentação salva!");
+  selecionados = [];
+  tipo.value = "";
+  colaborador.value = "";
+  resumo.classList.add("hidden");
+  render();
+};
+
+busca.oninput = e => render(e.target.value);
+tipo.onchange = validar;
+colaborador.onchange = validar;
+
+render();
+atualizarResumo();
+</script>
+
+</body>
+</html>

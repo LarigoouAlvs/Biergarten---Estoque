@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Biergarten | Relatórios</title>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      deleteDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
+      authDomain: "biergarten-f5756.firebaseapp.com",
+      projectId: "biergarten-f5756",
+      storageBucket: "biergarten-f5756.firebasestorage.app",
+      messagingSenderId: "391344176716",
+      appId: "1:391344176716:web:db69d2b7d99fca2a377ee9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const lista = document.getElementById("lista");
+    const filtroMes = document.getElementById("mes");
+
+    let dados = [];
+
+    async function carregar() {
+      lista.innerHTML = "";
+      dados = [];
+
+      const snap = await getDocs(collection(db, "movimentacoes"));
+      snap.forEach(d => {
+        dados.push({ id: d.id, ...d.data() });
+      });
+
+      render();
+    }
+
+    function render() {
+      lista.innerHTML = "";
+
+      const mesSelecionado = filtroMes.value;
+
+      dados
+        .filter(r => {
+          if (!mesSelecionado) return true;
+          const data = r.data.toDate();
+          return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}` === mesSelecionado;
+        })
+        .sort((a, b) => b.data.seconds - a.data.seconds)
+        .forEach(r => {
+          const div = document.createElement("div");
+          div.className = "registro";
+
+          div.innerHTML = `
+            <div>
+              <strong>${r.tipo.toUpperCase()}</strong> — ${r.colaborador}<br>
+              <small>${r.data.toDate().toLocaleString()}</small><br>
+              ${r.itens.map(i => `${i.produto} (${i.quantidade})`).join(", ")}
+            </div>
+            <button class="lixeira">🗑️</button>
+          `;
+
+          div.querySelector("button").onclick = async () => {
+            if (confirm("Excluir este registro?")) {
+              await deleteDoc(doc(db, "movimentacoes", r.id));
+              carregar();
+            }
+          };
+
+          lista.appendChild(div);
+        });
+    }
+
+    function exportarCSV() {
+      let csv = "Tipo,Colaborador,Data,Itens\n";
+      dados.forEach(r => {
+        csv += `${r.tipo},${r.colaborador},${r.data.toDate().toLocaleString()},"${r.itens.map(i => i.produto + ' ' + i.quantidade).join(' | ')}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "relatorio_biergarten.csv";
+      link.click();
+    }
+
+    window.onload = carregar;
+    window.exportarCSV = exportarCSV;
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #F4C430; /* Pantone 1225 C aproximado */
+      margin-bottom: 10px;
+    }
+
+    .topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    select, button {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      font-weight: bold;
+    }
+
+    select {
+      background: #fff;
+      color: #000;
+    }
+
+    button {
+      background: #F4C430;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .registro {
+      background: #262626;
+      border-left: 6px solid #F4C430;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 6px;
+    }
+
+    .lixeira {
+      background: transparent;
+      color: #ff4d4d;
+      font-size: 18px;
+    }
+
+    .acoes {
+      margin-bottom: 20px;
+    }
+
+    a.voltar {
+      color: #F4C430;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    /* ===== MOBILE ===== */
+@media (max-width: 768px) {
+
+  body {
+    padding: 12px;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    text-align: center;
+  }
+
+  header a {
+    width: 100%;
+    text-align: center;
+  }
+
+  input {
+    font-size: 18px;
+  }
+
+  .produto {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .botoes {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .botoes button {
+    flex: 1;
+    margin: 0 4px;
+    padding: 14px 0;
+    font-size: 16px;
+  }
+
+  .contador {
+    min-width: 40px;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  #resumo {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border-radius: 12px 12px 0 0;
+    max-height: 60vh;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  #finalizar {
+    font-size: 18px;
+    padding: 16px;
+  }
+
+  select {
+    font-size: 18px;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+
+  <div class="topo">
+    <h1>🍺 Biergarten — Relatórios</h1>
+    <a href="index.html" class="voltar">⬅ Voltar</a>
+  </div>
+
+  <div class="acoes">
+    <input type="month" id="mes" onchange="render()">
+    <button onclick="exportarCSV()">📤 Exportar CSV</button>
+  </div>
+
+  <div id="lista"></div>
+
+</body>
+</html>
