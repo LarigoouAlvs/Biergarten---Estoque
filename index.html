@@ -8,15 +8,12 @@
 
 <style>
 :root {
-  --amarelo: #F4C430; /* Pantone 1225 C aproximado */
+  --amarelo: #F4C430;
   --preto: #1a1a1a;
   --preto80: #262626;
-  --cinza: #e0e0e0;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   font-family: Arial, sans-serif;
@@ -30,7 +27,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 header h1 {
@@ -47,189 +44,54 @@ header a {
   font-weight: bold;
 }
 
-header a:hover {
-  opacity: 0.9;
-}
-
-input, select {
+input, select, button {
   width: 100%;
   padding: 12px;
-  margin-bottom: 15px;
-  font-size: 16px;
+  margin-bottom: 12px;
   border-radius: 6px;
   border: none;
-}
-
-input {
-  background: #fff;
-}
-
-select {
-  background: #fff;
+  font-size: 16px;
 }
 
 .produto {
   background: var(--preto80);
-  padding: 14px;
+  padding: 12px;
+  border-left: 6px solid var(--amarelo);
+  border-radius: 6px;
   margin-bottom: 10px;
-  border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-left: 6px solid var(--amarelo);
-}
-
-.produto span {
-  font-weight: bold;
 }
 
 .botoes button {
+  width: auto;
   margin-left: 6px;
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
+  font-weight: bold;
   cursor: pointer;
-  font-weight: bold;
-}
-
-.add1 { background: #555; color: #fff; }
-.add6 { background: var(--amarelo); color: #000; }
-.add12 { background: #ffdf70; color: #000; }
-
-.contador {
-  font-weight: bold;
-  margin-left: 10px;
-  color: var(--amarelo);
 }
 
 #resumo {
   background: var(--preto80);
-  padding: 18px;
-  margin-top: 25px;
+  padding: 16px;
+  margin-top: 20px;
   border-radius: 10px;
   border-top: 4px solid var(--amarelo);
 }
 
-#resumo h3 {
-  margin-top: 0;
-  color: var(--amarelo);
-}
-
-#resumo ul {
-  list-style: none;
-  padding: 0;
-}
-
-#resumo li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-#resumo li button {
-  background: transparent;
-  border: none;
-  color: #ff4d4d;
-  font-size: 18px;
-  cursor: pointer;
-}
+.hidden { display: none; }
 
 #finalizar {
-  width: 100%;
-  padding: 14px;
-  margin-top: 15px;
-  font-size: 16px;
   background: var(--amarelo);
   color: #000;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
 }
 
 #finalizar:disabled {
   background: #777;
   cursor: not-allowed;
 }
-
-.hidden {
-  display: none;
-}
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
-
-  body {
-    padding: 12px;
-  }
-
-  header {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  header h1 {
-    font-size: 22px;
-    text-align: center;
-  }
-
-  header a {
-    width: 100%;
-    text-align: center;
-  }
-
-  input {
-    font-size: 18px;
-  }
-
-  .produto {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .botoes {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .botoes button {
-    flex: 1;
-    margin: 0 4px;
-    padding: 14px 0;
-    font-size: 16px;
-  }
-
-  .contador {
-    min-width: 40px;
-    text-align: center;
-    font-size: 18px;
-  }
-
-  #resumo {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    border-radius: 12px 12px 0 0;
-    max-height: 60vh;
-    overflow-y: auto;
-    z-index: 10;
-  }
-
-  #finalizar {
-    font-size: 18px;
-    padding: 16px;
-  }
-
-  select {
-    font-size: 18px;
-  }
-}
-
 </style>
 </head>
 
@@ -241,7 +103,6 @@ select {
 </header>
 
 <input type="text" id="busca" placeholder="🔍 Buscar produto...">
-
 <div id="lista"></div>
 
 <div id="resumo" class="hidden">
@@ -265,7 +126,25 @@ select {
   <button id="finalizar" disabled>Finalizar Movimentação</button>
 </div>
 
-<script>
+<!-- 🔥 FIREBASE + LÓGICA -->
+<script type="module">
+/* 🔥 FIREBASE */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
+  authDomain: "biergarten-f5756.firebaseapp.com",
+  projectId: "biergarten-f5756",
+  storageBucket: "biergarten-f5756.firebasestorage.app",
+  messagingSenderId: "391344176716",
+  appId: "1:391344176716:web:db69d2b7d99fca2a377ee9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* 📦 PRODUTOS */
 const produtos = [
   "Coca-Cola",
   "Coca Zero",
@@ -278,8 +157,10 @@ const produtos = [
   "Água com gás"
 ];
 
+/* 🧠 ESTADO */
 let selecionados = JSON.parse(localStorage.getItem("temporario")) || [];
 
+/* 🔗 ELEMENTOS */
 const lista = document.getElementById("lista");
 const busca = document.getElementById("busca");
 const resumo = document.getElementById("resumo");
@@ -288,6 +169,7 @@ const tipo = document.getElementById("tipo");
 const colaborador = document.getElementById("colaborador");
 const finalizar = document.getElementById("finalizar");
 
+/* 🖥️ RENDER */
 function render(filtro = "") {
   lista.innerHTML = "";
 
@@ -301,17 +183,18 @@ function render(filtro = "") {
       div.innerHTML = `
         <span>${produto}</span>
         <div class="botoes">
-          <button class="add1" onclick="add('${produto}',1)">+1</button>
-          <button class="add6" onclick="add('${produto}',6)">+6</button>
-          <button class="add12" onclick="add('${produto}',12)">+12</button>
-          <span class="contador">${qtd}</span>
+          <button onclick="add('${produto}',1)">+1</button>
+          <button onclick="add('${produto}',6)">+6</button>
+          <button onclick="add('${produto}',12)">+12</button>
+          <strong>${qtd}</strong>
         </div>
       `;
       lista.appendChild(div);
     });
 }
 
-function add(produto, qtd) {
+/* ➕ ADD */
+window.add = function(produto, qtd) {
   const item = selecionados.find(i => i.produto === produto);
   if (item) item.quantidade += qtd;
   else selecionados.push({ produto, quantidade: qtd });
@@ -319,25 +202,25 @@ function add(produto, qtd) {
   salvarTemp();
   atualizarResumo();
   render(busca.value);
-}
+};
 
-function remover(produto) {
+/* 🗑️ REMOVER */
+window.remover = function(produto) {
   selecionados = selecionados.filter(i => i.produto !== produto);
   salvarTemp();
   atualizarResumo();
   render(busca.value);
-}
+};
 
+/* 📋 RESUMO */
 function atualizarResumo() {
   itens.innerHTML = "";
   resumo.classList.toggle("hidden", selecionados.length === 0);
 
   selecionados.forEach(i => {
     const li = document.createElement("li");
-    li.innerHTML = `
-      ${i.quantidade} x ${i.produto}
-      <button onclick="remover('${i.produto}')">🗑️</button>
-    `;
+    li.innerHTML = `${i.quantidade} x ${i.produto}
+      <button onclick="remover('${i.produto}')">🗑️</button>`;
     itens.appendChild(li);
   });
 
@@ -352,9 +235,18 @@ function salvarTemp() {
   localStorage.setItem("temporario", JSON.stringify(selecionados));
 }
 
-finalizar.onclick = () => {
+/* 🚀 SALVAR NO FIREBASE */
+finalizar.onclick = async () => {
+  await addDoc(collection(db, "movimentacoes"), {
+    tipo: tipo.value,
+    colaborador: colaborador.value,
+    data: new Date(),
+    itens: selecionados
+  });
+
   localStorage.removeItem("temporario");
-  alert("Movimentação salva!");
+  alert("Movimentação salva no Firebase 🔥");
+
   selecionados = [];
   tipo.value = "";
   colaborador.value = "";
@@ -362,35 +254,14 @@ finalizar.onclick = () => {
   render();
 };
 
+/* 🔍 EVENTOS */
 busca.oninput = e => render(e.target.value);
 tipo.onchange = validar;
 colaborador.onchange = validar;
 
 render();
 atualizarResumo();
-
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
-  authDomain: "biergarten-f5756.firebaseapp.com",
-  projectId: "biergarten-f5756",
-  storageBucket: "biergarten-f5756.firebasestorage.app",
-  messagingSenderId: "391344176716",
-  appId: "1:391344176716:web:db69d2b7d99fca2a377ee9"
-};
-
-window.app = initializeApp(firebaseConfig);
-window.db = getFirestore(app);
 </script>
-
 
 </body>
 </html>
-
