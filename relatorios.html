@@ -73,6 +73,33 @@ button {
 .registro small {
   color: #ccc;
 }
+  .tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--preto80);
+}
+
+.tabela th, .tabela td {
+  border: 1px solid #444;
+  padding: 8px;
+  text-align: left;
+}
+
+.tabela th {
+  background: var(--amarelo);
+  color: #000;
+}
+
+.entrada {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.saida {
+  color: #ff5252;
+  font-weight: bold;
+}
+
 </style>
 </head>
 
@@ -92,7 +119,6 @@ button {
 
 <!-- 🔥 FIREBASE + RELATÓRIO -->
 <script type="module">
-/* 🔥 FIREBASE */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -102,6 +128,7 @@ import {
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* 🔥 FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
   authDomain: "biergarten-f5756.firebaseapp.com",
@@ -114,106 +141,70 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* 🔗 ELEMENTOS */
+/* ELEMENTOS */
 const lista = document.getElementById("lista");
 const mesInput = document.getElementById("mes");
-const btnPdf = document.getElementById("btnPdf");
 
-let dados = [];
-
-/* 📥 BUSCAR DADOS */
+/* BUSCAR DADOS */
 async function carregarDados() {
   lista.innerHTML = "Carregando...";
-  dados = [];
 
   const q = query(
     collection(db, "movimentacoes"),
-    orderBy("data", "desc")
+    orderBy("data", "asc")
   );
 
   const snapshot = await getDocs(q);
 
+  const linhas = [];
+
   snapshot.forEach(doc => {
-    const d = doc.data();
-    d.id = doc.id;
-    dados.push(d);
-  });
+    const mov = doc.data();
+    const data = mov.data.toDate().toLocaleDateString();
 
-  render();
-}
-
-/* 🖥️ RENDER */
-function render() {
-  lista.innerHTML = "";
-
-  const filtroMes = mesInput.value;
-
-  const filtrados = dados.filter(d => {
-    if (!filtroMes) return true;
-    const data = d.data.toDate();
-    const mesDoc = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}`;
-    return mesDoc === filtroMes;
-  });
-
-  if (!filtrados.length) {
-    lista.innerHTML = "Nenhum registro encontrado.";
-    return;
-  }
-
-  filtrados.forEach(d => {
-    const data = d.data.toDate();
-
-    const div = document.createElement("div");
-    div.className = "registro";
-    div.innerHTML = `
-      <strong>${d.tipo.toUpperCase()}</strong> — ${d.colaborador}<br>
-      <small>${data.toLocaleString()}</small>
-      <ul>
-        ${d.itens.map(i => `<li>${i.quantidade} x ${i.produto}</li>`).join("")}
-      </ul>
-    `;
-    lista.appendChild(div);
-  });
-}
-
-/* 📄 PDF */
-btnPdf.onclick = () => {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-
-  let y = 10;
-  pdf.setFontSize(12);
-  pdf.text("Relatório de Movimentações - Biergarten", 10, y);
-  y += 10;
-
-  dados.forEach(d => {
-    const data = d.data.toDate();
-    pdf.text(`${d.tipo.toUpperCase()} - ${d.colaborador}`, 10, y);
-    y += 6;
-    pdf.text(data.toLocaleString(), 10, y);
-    y += 6;
-
-    d.itens.forEach(i => {
-      pdf.text(`• ${i.quantidade} x ${i.produto}`, 14, y);
-      y += 6;
+    mov.itens.forEach(item => {
+      linhas.push({
+        data,
+        produto: item.produto,
+        entrada: mov.tipo === "entrada" ? item.quantidade : "",
+        saida: mov.tipo === "saida" ? item.quantidade : ""
+      });
     });
-
-    y += 4;
-    if (y > 270) {
-      pdf.addPage();
-      y = 10;
-    }
   });
 
-  pdf.save("relatorio-biergarten.pdf");
-};
+  render(linhas);
+}
 
-/* 🔄 EVENTOS */
-mesInput.onchange = render;
+/* RENDER PLANILHA */
+function render(linhas) {
+  lista.innerHTML = `
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Produto</th>
+          <th>Entrada</th>
+          <th>Saída</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${linhas.map(l => `
+          <tr>
+            <td>${l.data}</td>
+            <td>${l.produto}</td>
+            <td class="entrada">${l.entrada}</td>
+            <td class="saida">${l.saida}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
 
-/* 🚀 INIT */
 carregarDados();
 </script>
 
+
 </body>
 </html>
+
