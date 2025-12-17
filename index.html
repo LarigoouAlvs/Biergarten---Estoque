@@ -43,24 +43,6 @@ header a {
   text-decoration: none;
   font-weight: bold;
 }
-  .acoes-topo {
-  display: flex;
-  gap: 10px;
-}
-
-.acoes-topo a {
-  background: var(--amarelo);
-  color: #000;
-  padding: 10px 14px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.acoes-topo a:hover {
-  opacity: 0.9;
-}
-
 
 input, select, button {
   width: 100%;
@@ -147,15 +129,8 @@ input, select, button {
 
 <header>
   <h1>🍺 Biergarten</h1>
-
-  <div class="acoes-topo">
-    <a href="escala.html">📅 Escala</a>
-    <a href="relatorios.html">📊 Relatórios</a>
-    <a href="hortifruti.html">🥬 Hortifrúti</a>
-    <a href="drinks.html">🍸 Receitas</a>
-  </div>
+  <a href="relatorios.html">📊 Relatórios</a>
 </header>
-
 
 <input type="text" id="busca" placeholder="🔍 Buscar produto...">
 <div id="lista"></div>
@@ -203,19 +178,11 @@ const db = getFirestore(app);
 const produtos = [
   "Coca-Cola",
   "Coca Zero",
-  "Guaraná",
-  "Guaraná Zero",
   "Fanta",
   "Sprite",
-  "Tonica",
-  "Tonica Zero",
-  "Citrus Original",
   "Red Bull",
-  "Red Bull Zero",
-  "Red Bull Tropical",
   "Stella",
   "Stella Gold",
-  "Heineken Zero",
   "Água sem gás",
   "Água com gás"
 ];
@@ -244,14 +211,16 @@ function render(filtro = "") {
       const div = document.createElement("div");
       div.className = "produto";
       div.innerHTML = `
-        <span>${produto}</span>
-        <div class="botoes">
-          <button onclick="add('${produto}',1)">+1</button>
-          <button onclick="add('${produto}',6)">+6</button>
-          <button onclick="add('${produto}',12)">+12</button>
-          <strong>${qtd}</strong>
-        </div>
-      `;
+  <span>${produto}</span>
+  <div class="botoes">
+    <button onclick="sub('${produto}')">-1</button>
+    <button onclick="add('${produto}',1)">+1</button>
+    <button onclick="add('${produto}',6)">+6</button>
+    <button onclick="add('${produto}',12)">+12</button>
+    <strong>${qtd}</strong>
+  </div>
+`;
+
       lista.appendChild(div);
     });
 }
@@ -266,6 +235,23 @@ window.add = function(produto, qtd) {
   atualizarResumo();
   render(busca.value);
 };
+
+/* ➖ SUB -1 */
+window.sub = function(produto) {
+  const item = selecionados.find(i => i.produto === produto);
+  if (!item) return;
+
+  item.quantidade -= 1;
+
+  if (item.quantidade <= 0) {
+    selecionados = selecionados.filter(i => i.produto !== produto);
+  }
+
+  salvarTemp();
+  atualizarResumo();
+  render(busca.value);
+};
+
 
 /* 🗑️ REMOVER */
 window.remover = function(produto) {
@@ -331,12 +317,3 @@ atualizarResumo();
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
