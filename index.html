@@ -121,38 +121,51 @@ input, select, button {
   padding: 0;
   line-height: 1;
 }
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* BOTÃO ☰ */
 .menu-toggle {
   display: none;
   background: var(--amarelo);
   color: #000;
   border: none;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 20px;
+  width: 44px;      /* 👈 largura fixa */
+  height: 44px;     /* 👈 altura fixa */
+  border-radius: 8px;
+  font-size: 22px;
   cursor: pointer;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
   .menu-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .acoes-topo {
     display: none;
     position: absolute;
     top: 60px;
-    right: 20px;
+    right: 0;
+    width: 180px; /* 👈 menu NÃO ocupa a tela */
     background: var(--preto80);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 10px;
     flex-direction: column;
-    gap: 10px;
-    z-index: 1000;
+    gap: 8px;
+    z-index: 999;
   }
 
   .acoes-topo a {
-    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
     text-align: left;
   }
 
@@ -160,6 +173,7 @@ input, select, button {
     display: flex;
   }
 }
+
 
  
 </style>
@@ -374,3 +388,4 @@ atualizarResumo();
 
 </body>
 </html>
+
