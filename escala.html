@@ -162,7 +162,7 @@ window.getDoc = getDoc;
 /* === DATA ATUAL (BRASIL) === */
 const ano = 2025;
 const mes = 11; // dezembro (0 = janeiro)
-
+const hoje = new Date(ano, mes, 1); // <-- CORREÇÃO: Definindo a data
 
 const nomeMes = hoje.toLocaleString("pt-BR", { month: "long" }).toUpperCase();
 document.getElementById("titulo").innerText = `ESCALA MENSAL – ${nomeMes}`;
@@ -252,9 +252,13 @@ function montarTabela(dias){
   document.getElementById("calendario").innerHTML += html;
 }
 
-gerarCalendario();
-carregarEscalaFirebase();
-
+window.onload = () => {
+   gerarCalendario();
+   // Pequeno delay para garantir que o Firebase injetou as funções no window
+   setTimeout(() => {
+       carregarEscalaFirebase();
+   }, 500);
+};
 
 async function carregarEscalaFirebase(){
   const mesDoc = `${ano}-${String(mes+1).padStart(2,"0")}`;
@@ -288,9 +292,6 @@ async function carregarEscalaFirebase(){
     }
   });
 }
-
-
-
 
 // ===== EDIÇÃO COM SENHA (ADMIN) =====
 const SENHA_ADMIN = "1234"; // troque depois
@@ -351,6 +352,7 @@ if (nome && data) {
 
 </body>
 </html>
+
 
 
 
