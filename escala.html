@@ -232,23 +232,19 @@ function gerarCalendario(){
 
 function montarTabela(dias){
   let html = `<table><tr><th>Nome</th>`;
-  
   dias.forEach(d=>{
-    const dataObj = new Date(ano, mes, d);
-    const diaSemana = dataObj.toLocaleString("pt-BR",{weekday:"long"});
+    const data = new Date(ano, mes, d);
+    const diaSemana = data.toLocaleString("pt-BR",{weekday:"long"});
     html += `<th>${diaSemana}<br>${String(d).padStart(2,"0")}/${String(mes+1).padStart(2,"0")}</th>`;
   });
-
   html += `</tr>`;
 
   funcionarios.forEach(nome=>{
     html += `<tr><td class="nome">${nome}</td>`;
-
-    dias.forEach(d=>{
-      const dataISO = `${ano}-${String(mes+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    dias.forEach(dia=>{
+      const dataISO = `${ano}-${String(mes+1).padStart(2,"0")}-${String(dia).padStart(2,"0")}`;
       html += `<td data-nome="${nome}" data-data="${dataISO}">-</td>`;
     });
-
     html += `</tr>`;
   });
 
@@ -269,16 +265,16 @@ async function carregarEscalaFirebase(){
     const nome = td.dataset.nome;
     const dataISO = td.dataset.data;
 
-    let valor = "-";
+    let valor;
 
-    // 🔹 1) Firebase tem prioridade
+    // 1️⃣ Firebase tem prioridade
     if (dados[dataISO] && dados[dataISO][nome]) {
       valor = dados[dataISO][nome];
-    }
-    // 🔹 2) fallback seguro para o modelo
+    } 
+    // 2️⃣ fallback para modelo fixo
     else {
       const [y, m, d] = dataISO.split("-").map(Number);
-      const dataObj = new Date(y, m - 1, d); // ✅ SEM BUG
+      const dataObj = new Date(y, m - 1, d);
       const ds = diasSemana[dataObj.getDay()];
       valor = modelo[nome][ds] || "-";
     }
@@ -292,6 +288,7 @@ async function carregarEscalaFirebase(){
     }
   });
 }
+
 
 
 
@@ -354,6 +351,7 @@ if (nome && data) {
 
 </body>
 </html>
+
 
 
 
