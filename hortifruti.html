@@ -140,6 +140,15 @@ const frutas = [
   "Alecrim",
 ];
 
+/* 📦 UNIDADE PADRÃO POR PRODUTO */
+const unidades = {
+  "Morango": "cx",
+  "Uva Verde": "cx",
+  "Hortelã": "ramo",
+  "Alecrim": "ramo"
+};
+
+
 /* ESTADO */
 let selecionados = {};
 
@@ -159,16 +168,15 @@ function render() {
     const div = document.createElement("div");
     div.className = "produto";
 
-    div.innerHTML = `
-      <span>${fruta}</span>
-      <div class="botoes">
-        <button onclick="add('${fruta}')">+1</button>
-        ${qtd > 0 ? `
-          <span class="contador">${qtd}x</span>
-          <button class="lixeira" onclick="remover('${fruta}')">🗑️</button>
-        ` : ""}
-      </div>
-    `;
+  div.innerHTML = `
+  <span>${fruta}</span>
+  <div class="botoes">
+    <button onclick="sub('${fruta}')">-1</button>
+    <span class="contador">${qtd}</span>
+    <button onclick="add('${fruta}')">+1</button>
+  </div>
+`;
+
 
     lista.appendChild(div);
   });
@@ -176,31 +184,48 @@ function render() {
   concluir.classList.toggle("hidden", Object.keys(selecionados).length === 0);
 }
 
-/* ➕ ADD */
 window.add = fruta => {
   selecionados[fruta] = (selecionados[fruta] || 0) + 1;
   render();
 };
 
-/* 🗑️ REMOVER */
-window.remover = fruta => {
-  delete selecionados[fruta];
+window.sub = fruta => {
+  if (!selecionados[fruta]) return;
+
+  selecionados[fruta]--;
+
+  if (selecionados[fruta] <= 0) {
+    delete selecionados[fruta];
+  }
+
   render();
 };
 
-/* ✅ CONCLUIR */
+
 concluir.onclick = () => {
   itens.innerHTML = "";
 
+  let mensagem = "🧺 *Pedido Hortifrúti – Biergarten*\n\n";
+
   Object.entries(selecionados).forEach(([fruta, qtd]) => {
+    const unidade = unidades[fruta] || "un";
+    const texto = `${qtd} ${unidade} ${fruta}`;
+
     const li = document.createElement("li");
-    li.textContent = `${qtd}x ${fruta}`;
+    li.textContent = texto;
     itens.appendChild(li);
+
+    mensagem += `• ${texto}\n`;
   });
 
   resumo.classList.remove("hidden");
 
-  /* LIMPA PEDIDO (SÓ DO DIA) */
+  // 📲 ENVIA PARA WHATSAPP
+  const telefone = "5547996086328";
+  const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
+  window.open(url, "_blank");
+
+  // 🔄 LIMPA PEDIDO
   selecionados = {};
   render();
 };
