@@ -2,11 +2,10 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Escala Mensal - Dezembro</title>
-  <a href="index.html" class="btn-voltar">⬅ Voltar</a>
-
+<title>Escala Mensal</title>
 
 <style>
+/* === SEU VISUAL (INALTERADO) === */
 :root{
   --amarelo:#F4C430;
   --preto:#1a1a1a;
@@ -15,57 +14,60 @@
   --folga:#f6d7c3;
 }
 
+*{ box-sizing:border-box; }
+
 body{
   background:var(--preto);
   color:#fff;
   font-family:Arial, Helvetica, sans-serif;
-  padding:20px;
+  padding:10px;
+}
+
+.topo{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
 }
 
 h1{
   color:var(--amarelo);
-  text-align:center;
-  margin-bottom:5px;
+  font-size:18px;
+  margin:0;
 }
 
-h2{
-  text-align:center;
-  font-size:13px;
-  opacity:.8;
-  margin-bottom:25px;
-}
-
-.semana{
-  margin-bottom:30px;
-}
-
-.semana h3{
-  color:var(--amarelo);
-  margin-bottom:8px;
-  font-size:15px;
+.voltar{
+  background:var(--amarelo);
+  color:#000;
+  padding:6px 12px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:bold;
+  text-decoration:none;
 }
 
 table{
   width:100%;
   border-collapse:collapse;
   table-layout:fixed;
+  margin-bottom:14px;
 }
 
 th, td{
   border:1px solid var(--borda);
-  padding:6px;
-  font-size:12px;
-  vertical-align:top;
+  padding:3px 2px;
+  font-size:10.5px;
   text-align:center;
+  vertical-align:middle;
 }
 
 th{
   background:var(--amarelo);
   color:#000;
-  font-weight:bold;
 }
 
 .nome{
+  width:65px;
   font-weight:bold;
   background:#111;
 }
@@ -77,343 +79,234 @@ th{
 }
 
 .obs{
-  margin-top:30px;
   text-align:center;
-  font-size:12px;
-  opacity:.8;
-}
-
-@media print{
-  body{
-    background:#fff;
-    color:#000;
-  }
-  th{
-    background:#ddd;
-  }
+  font-size:11px;
+  opacity:.7;
 }
 </style>
 </head>
 
 <body>
 
-<h1>ESCALA MENSAL – DEZEMBRO</h1>
-<h2>Escala sujeita a alterações</h2>
-
-<!-- SEMANA 1 -->
-<div class="semana">
-<h3>30/11 a 06/12</h3>
-<table>
-<tr>
-<th>Nome</th>
-<th>Domingo<br>30/11</th>
-<th>Segunda<br>01/12</th>
-<th>Terça<br>02/12</th>
-<th>Quarta<br>03/12</th>
-<th>Quinta<br>04/12</th>
-<th>Sexta<br>05/12</th>
-<th>Sábado<br>06/12</th>
-</tr>
-
-<tr>
-<td class="nome">Samuel</td>
-<td>-</td>
-<td class="folga">FOLGA</td>
-<td>11:00 - 14:00 / 18:00 - 23:00</td>
-<td>11:00 - 14:00 / 18:00 - 23:00</td>
-<td>11:00 - 14:00 / 18:00 - 23:00</td>
-<td>11:00 - 14:00 / 18:00 - 23:00</td>
-<td>11:00 - 14:00 / 18:00 - 23:00</td>
-</tr>
-
-<tr>
-<td class="nome">Alisson</td>
-<td>-</td>
-<td>15:30 - 18:00 / 19:00 - 23:30</td>
-<td>12:00 - 15:30 / 18:00 - 23:00</td>
-<td class="folga">FOLGA</td>
-<td>15:30 - 18:00 / 19:00 - 23:30</td>
-<td>15:30 - 17:00 / 18:00 - 00:30</td>
-<td>15:30 - 15:00 / 18:00 - 23:30</td>
-</tr>
-
-<tr>
-<td class="nome">Larissa</td>
-<td>-</td>
-<td>09:30 - 11:00 / 12:00 - 18:00</td>
-<td class="folga">FOLGA</td>
-<td>09:30 - 11:00 / 12:00 - 18:00</td>
-<td>09:30 - 11:00 / 12:00 - 18:00</td>
-<td>09:30 - 11:00 / 12:00 - 18:00</td>
-<td>09:30 - 11:00 / 12:00 - 18:00</td>
-</tr>
-
-<tr>
-<td class="nome">Daniel</td>
-<td>-</td>
-<td>11:00 - 14:00 / 18:00 - 23:00</td>
-<td>15:30 - 18:00 / 19:00 - 23:30</td>
-<td>15:30 - 18:00 / 19:00 - 23:30</td>
-<td class="folga">FOLGA</td>
-<td>15:30 - 17:00 / 18:00 - 00:30</td>
-<td>11:00 - 14:00 / 14:30 - 16:30</td>
-</tr>
-</table>
-
-<table class="escala">
-  <thead>
-    <tr>
-      <th>Nome</th>
-      <th>Domingo<br>07/12</th>
-      <th>Segunda<br>08/12</th>
-      <th>Terça<br>09/12</th>
-      <th>Quarta<br>10/12</th>
-      <th>Quinta<br>11/12</th>
-      <th>Sexta<br>12/12</th>
-      <th>Sábado<br>13/12</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Samuel</td>
-      <td class="folga">FOLGA</td>
-      <td class="folga">FOLGA</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-    </tr>
-
-    <tr>
-      <td>Alisson</td>
-      <td>11:00 - 14:00 / 14:30 - 16:30</td>
-      <td>15:30 - 17:00 / 18:00 - 23:30</td>
-      <td>15:30 - 17:00 / 18:00 - 23:30</td>
-      <td class="folga">FOLGA</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 15:00 / 18:00 - 23:30</td>
-    </tr>
-
-    <tr>
-      <td>Larissa</td>
-      <td>09:30 - 11:00 / 12:00 - 16:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td class="folga">FOLGA</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-    </tr>
-
-    <tr>
-      <td>Daniel</td>
-      <td>11:00 - 14:00 / 14:30 - 16:30</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-      <td class="folga">FOLGA</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>13:30 - 15:00 / 18:00 - 23:30</td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-<table class="escala">
-  <thead>
-    <tr>
-      <th>Nome</th>
-      <th>Domingo<br>14/12</th>
-      <th>Segunda<br>15/12</th>
-      <th>Terça<br>16/12</th>
-      <th>Quarta<br>17/12</th>
-      <th>Quinta<br>18/12</th>
-      <th>Sexta<br>19/12</th>
-      <th>Sábado<br>20/12</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Samuel</td>
-      <td>11:00 - 14:00 / 14:30 - 16:30</td>
-      <td class="folga">FOLGA</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-    </tr>
-
-    <tr>
-      <td>Alisson</td>
-      <td>11:00 - 14:00 / 14:30 - 17:00</td>
-      <td>15:30 - 17:00 / 18:00 - 23:30</td>
-      <td>12:00 - 15:30 / 18:00 - 23:00</td>
-      <td class="folga">FOLGA</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 15:00 / 18:00 - 23:30</td>
-    </tr>
-
-    <tr>
-      <td>Larissa</td>
-      <td>09:30 - 11:00 / 12:00 - 16:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td class="folga">FOLGA</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-    </tr>
-
-    <tr>
-      <td>Daniel</td>
-      <td class="folga">FOLGA</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-      <td>12:00 - 15:30 / 18:00 - 23:00</td>
-      <td class="folga">FOLGA</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 18:00 / 19:00 - 00:30</td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-<table class="escala">
-  <thead>
-    <tr>
-      <th>Nome</th>
-      <th>Domingo<br>21/12</th>
-      <th>Segunda<br>22/12</th>
-      <th>Terça<br>23/12</th>
-      <th>Quarta<br>24/12</th>
-      <th>Quinta<br>25/12</th>
-      <th>Sexta<br>26/12</th>
-      <th>Sábado<br>27/12</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Samuel</td>
-      <td>11:00 - 14:00 / 14:30 - 16:30</td>
-      <td>FOLGA</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>09:30 - 14:00 / 14:30 - 16:00</td>
-      <td>-</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-    </tr>
-
-    <tr>
-      <td>Alisson</td>
-      <td>11:00 - 14:00 / 14:30 - 16:30</td>
-      <td>15:30 - 17:00 / 18:00 - 23:30</td>
-      <td>15:30 - 17:00 / 18:00 - 23:30</td>
-      <td class="folga">FOLGA</td>
-      <td>-</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 18:00 / 19:00 - 00:30</td>
-    </tr>
-
-    <tr>
-      <td>Larissa</td>
-      <td class="folga">FOLGA</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td class="folga">FOLGA</td>
-      <td>09:30 - 11:00 / 12:00 - 16:00</td>
-      <td>-</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-    </tr>
-
-    <tr>
-      <td>Daniel</td>
-      <td>11:00 - 14:00 / 14:30 - 16:30</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-      <td>09:30 - 14:00 / 14:30 - 17:00</td>
-      <td>-</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 18:00 / 19:00 - 00:30</td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-<!-- SEMANA 5 -->
-<table class="escala">
-  <thead>
-    <tr>
-      <th>Nome</th>
-      <th>Domingo<br>28/12</th>
-      <th>Segunda<br>29/12</th>
-      <th>Terça<br>30/12</th>
-      <th>Quarta<br>31/12</th>
-      <th>Quinta<br>01/01</th>
-      <th>Sexta<br>02/01</th>
-      <th>Sábado<br>03/01</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Samuel</strong></td>
-      <td>11:00 - 14:00 / 14:30 - 16:00</td>
-      <td class="folga">FOLGA</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 14:30 - 16:00</td>
-      <td>-</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-    </tr>
-
-    <tr>
-      <td><strong>Alisson</strong></td>
-      <td>11:00 - 14:00 / 14:30 - 17:00</td>
-      <td>15:30 - 17:00 / 18:00 - 23:30</td>
-      <td>12:00 - 15:30 / 18:00 - 23:00</td>
-      <td>11:00 - 14:00 / 14:30 - 17:00</td>
-      <td>-</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-    </tr>
-
-    <tr>
-      <td><strong>Larissa</strong></td>
-      <td>09:30 - 11:00 / 12:00 - 16:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td class="folga">FOLGA</td>
-      <td>09:30 - 11:00 / 12:00 - 16:00</td>
-      <td>-</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-      <td>09:30 - 11:00 / 12:00 - 18:00</td>
-    </tr>
-
-    <tr>
-      <td><strong>Daniel</strong></td>
-      <td>11:00 - 14:00 / 14:30 - 17:00</td>
-      <td>11:00 - 14:00 / 18:00 - 23:00</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-      <td>11:00 - 14:00 / 14:30 - 17:00</td>
-      <td>-</td>
-      <td>15:30 - 17:00 / 18:00 - 00:30</td>
-      <td>15:30 - 18:00 / 19:00 - 23:30</td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-<!-- OBSERVAÇÃO -->
-<div class="obs">
-ESCALA SUJEITA A ALTERAÇÕES
+<div class="topo">
+  <h1 id="titulo"></h1>
+  <a href="index.html" class="voltar">⬅ Voltar</a>
 </div>
+
+<div id="calendario"></div>
+
+<div class="obs">ESCALA SUJEITA A ALTERAÇÕES</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔥 FIREBASE CONFIG (O MESMO DOS RELATÓRIOS) */
+const firebaseConfig = {
+  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
+  authDomain: "biergarten-f5756.firebaseapp.com",
+  projectId: "biergarten-f5756",
+  storageBucket: "biergarten-f5756.firebasestorage.app",
+  messagingSenderId: "391344176716",
+  appId: "1:391344176716:web:db69d2b7d99fca2a377ee9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* 🔗 disponibiliza para o outro script */
+window.db = db;
+window.doc = doc;
+window.setDoc = setDoc;
+window.getDoc = getDoc;
+</script>
+
+
+<script>
+/* === DATA ATUAL (BRASIL) === */
+const hoje = new Date();
+const ano = hoje.getFullYear();
+const mes = hoje.getMonth();
+
+const nomeMes = hoje.toLocaleString("pt-BR", { month: "long" }).toUpperCase();
+document.getElementById("titulo").innerText = `ESCALA MENSAL – ${nomeMes}`;
+
+/* === FUNCIONÁRIOS === */
+const funcionarios = ["Samuel", "Alisson", "Larissa", "Daniel"];
+
+/* === MODELO SEMANAL (HORÁRIOS FIXOS) === */
+const modelo = {
+  Samuel:{
+    seg:"FOLGA", ter:"11:00 - 14:00 / 18:00 - 23:00",
+    qua:"11:00 - 14:00 / 18:00 - 23:00",
+    qui:"11:00 - 14:00 / 18:00 - 23:00",
+    sex:"11:00 - 14:00 / 18:00 - 23:00",
+    sab:"11:00 - 14:00 / 18:00 - 23:00",
+    dom:"-"
+  },
+  Alisson:{
+    seg:"15:30 - 18:00 / 19:00 - 23:30",
+    ter:"12:00 - 15:30 / 18:00 - 23:00",
+    qua:"FOLGA",
+    qui:"15:30 - 18:00 / 19:00 - 23:30",
+    sex:"15:30 - 17:00 / 18:00 - 00:30",
+    sab:"15:30 - 18:00 / 19:00 - 23:30",
+    dom:"-"
+  },
+  Larissa:{
+    seg:"09:30 - 11:00 / 12:00 - 18:00",
+    ter:"FOLGA",
+    qua:"09:30 - 11:00 / 12:00 - 18:00",
+    qui:"09:30 - 11:00 / 12:00 - 18:00",
+    sex:"09:30 - 11:00 / 12:00 - 18:00",
+    sab:"09:30 - 11:00 / 12:00 - 18:00",
+    dom:"-"
+  },
+  Daniel:{
+    seg:"11:00 - 14:00 / 18:00 - 23:00",
+    ter:"15:30 - 18:00 / 19:00 - 23:30",
+    qua:"15:30 - 18:00 / 19:00 - 23:30",
+    qui:"FOLGA",
+    sex:"15:30 - 17:00 / 18:00 - 00:30",
+    sab:"13:30 - 15:00 / 18:00 - 23:30",
+    dom:"-"
+  }
+};
+
+const diasSemana = ["dom","seg","ter","qua","qui","sex","sab"];
+
+/* === GERAR CALENDÁRIO === */
+function gerarCalendario(){
+  const container = document.getElementById("calendario");
+  container.innerHTML = "";
+
+  const totalDias = new Date(ano, mes+1, 0).getDate();
+  let semana = [];
+
+  for(let d=1; d<=totalDias; d++){
+    semana.push(d);
+
+    if(semana.length === 7 || d === totalDias){
+      montarTabela(semana);
+      semana = [];
+    }
+  }
+}
+
+
+function montarTabela(dias){
+  let html = `<table><tr><th>Nome</th>`;
+  dias.forEach(d=>{
+    const data = new Date(ano, mes, d);
+    const diaSemana = data.toLocaleString("pt-BR",{weekday:"long"});
+    html += `<th>${diaSemana}<br>${String(d).padStart(2,"0")}/${String(mes+1).padStart(2,"0")}</th>`;
+  });
+  html += `</tr>`;
+
+  funcionarios.forEach(nome=>{
+    html += `<tr><td class="nome">${nome}</td>`;
+    dias.forEach(d=>{
+      const data = new Date(ano, mes, d);
+      const ds = diasSemana[data.getDay()];
+      const valor = modelo[nome][ds] || "-";
+      const classe = valor === "FOLGA" ? "folga" : "";
+      const dataISO = `${ano}-${String(mes+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+html += `<td class="${classe}" data-nome="${nome}" data-data="${dataISO}">${valor}</td>`;
+
+    });
+    html += `</tr>`;
+  });
+
+  html += `</table>`;
+  document.getElementById("calendario").innerHTML += html;
+}
+
+gerarCalendario();
+carregarEscalaFirebase();
+
+
+async function carregarEscalaFirebase(){
+  const mesDoc = `${ano}-${String(mes+1).padStart(2,"0")}`;
+  const snap = await getDoc(doc(db, "escala", mesDoc));
+  if (!snap.exists()) return;
+
+  const dados = snap.data();
+
+  document.querySelectorAll("td[data-nome]").forEach(td=>{
+    const nome = td.dataset.nome;
+    const data = td.dataset.data;
+
+    if (dados[data] && dados[data][nome]) {
+      td.innerText = dados[data][nome];
+      if (dados[data][nome] === "FOLGA") {
+        td.classList.add("folga");
+      }
+    }
+  });
+}
+
+
+// ===== EDIÇÃO COM SENHA (ADMIN) =====
+const SENHA_ADMIN = "1234"; // troque depois
+
+document.addEventListener("click", function (e) {
+  const cell = e.target;
+
+  // só permite editar TD que não seja nome
+  if (cell.tagName !== "TD") return;
+  if (cell.classList.contains("nome")) return;
+
+  const textoAtual = cell.innerText.trim();
+  if (!textoAtual) return;
+
+  const senha = prompt("Senha do administrador:");
+  if (senha !== SENHA_ADMIN) {
+    alert("Senha incorreta");
+    return;
+  }
+
+  const novoValor = prompt(
+    "Digite o novo horário ou FOLGA:",
+    textoAtual
+  );
+
+  if (novoValor === null) return;
+
+  cell.innerText = novoValor.toUpperCase();
+
+  // 🔥 SALVAR NO FIREBASE
+const nome = cell.dataset.nome;
+const data = cell.dataset.data;
+const mesDoc = `${ano}-${String(mes+1).padStart(2,"0")}`;
+
+if (nome && data) {
+  setDoc(
+    doc(db, "escala", mesDoc),
+    {
+      [data]: {
+        [nome]: novoValor.toUpperCase()
+      }
+    },
+    { merge: true }
+  );
+}
+
+
+  if (novoValor.toUpperCase().includes("FOLGA")) {
+    cell.classList.add("folga");
+  } else {
+    cell.classList.remove("folga");
+  }
+});
+
+</script>
+
+
 
 </body>
 </html>
-
