@@ -242,13 +242,12 @@ function montarTabela(dias){
   funcionarios.forEach(nome=>{
     html += `<tr><td class="nome">${nome}</td>`;
     dias.forEach(d=>{
-      const data = new Date(ano, mes, d);
-      const ds = diasSemana[data.getDay()];
-      const valor = modelo[nome][ds] || "-";
-      const classe = valor === "FOLGA" ? "folga" : "";
+      const dataObj = new Date(ano, mes, d);
+      const ds = diasSemana[dataObj.getDay()];
       const dataISO = `${ano}-${String(mes+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-html += `<td class="${classe}" data-nome="${nome}" data-data="${dataISO}">${valor}</td>`;
 
+      // 🔥 NÃO define valor aqui
+      html += `<td data-nome="${nome}" data-data="${dataISO}">-</td>`;
     });
     html += `</tr>`;
   });
@@ -264,19 +263,33 @@ carregarEscalaFirebase();
 async function carregarEscalaFirebase(){
   const mesDoc = `${ano}-${String(mes+1).padStart(2,"0")}`;
   const snap = await getDoc(doc(db, "escala", mesDoc));
-  if (!snap.exists()) return;
-
-  const dados = snap.data();
 
   document.querySelectorAll("td[data-nome]").forEach(td=>{
     const nome = td.dataset.nome;
     const data = td.dataset.data;
 
-    if (dados[data] && dados[data][nome]) {
-      td.innerText = dados[data][nome];
-      if (dados[data][nome] === "FOLGA") {
-        td.classList.add("folga");
+    let valor = "-";
+
+    if (snap.exists()) {
+      const dados = snap.data();
+      if (dados[data] && dados[data][nome]) {
+        valor = dados[data][nome];
       }
+    }
+
+    // fallback para modelo
+    if (valor === "-") {
+      const dataObj = new Date(data);
+      const ds = diasSemana[dataObj.getDay()];
+      valor = modelo[nome][ds] || "-";
+    }
+
+    td.innerText = valor;
+
+    if (valor === "FOLGA") {
+      td.classList.add("folga");
+    } else {
+      td.classList.remove("folga");
     }
   });
 }
@@ -341,3 +354,4 @@ if (nome && data) {
 
 </body>
 </html>
+
