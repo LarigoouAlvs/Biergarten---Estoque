@@ -232,25 +232,23 @@ function gerarCalendario(){
 
 function montarTabela(dias){
   let html = `<table><tr><th>Nome</th>`;
+  
   dias.forEach(d=>{
-    const data = new Date(ano, mes, d);
-    const diaSemana = data.toLocaleString("pt-BR",{weekday:"long"});
+    const dataObj = new Date(ano, mes, d);
+    const diaSemana = dataObj.toLocaleString("pt-BR",{weekday:"long"});
     html += `<th>${diaSemana}<br>${String(d).padStart(2,"0")}/${String(mes+1).padStart(2,"0")}</th>`;
   });
+
   html += `</tr>`;
 
   funcionarios.forEach(nome=>{
     html += `<tr><td class="nome">${nome}</td>`;
+
     dias.forEach(d=>{
-      const [y, m, d] = data.split("-").map(Number);
-const dataObj = new Date(y, m - 1, d);
-
-      const ds = diasSemana[dataObj.getDay()];
       const dataISO = `${ano}-${String(mes+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-
-      // 🔥 NÃO define valor aqui
       html += `<td data-nome="${nome}" data-data="${dataISO}">-</td>`;
     });
+
     html += `</tr>`;
   });
 
@@ -356,5 +354,6 @@ if (nome && data) {
 
 </body>
 </html>
+
 
 
