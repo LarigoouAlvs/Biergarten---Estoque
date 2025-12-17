@@ -1827,12 +1827,58 @@ const receitas = [
 const lista = document.getElementById("lista");
 const busca = document.getElementById("busca");
 
+function normalizar(texto) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function similaridade(a, b) {
+  a = normalizar(a);
+  b = normalizar(b);
+
+  let custos = [];
+  for (let i = 0; i <= a.length; i++) {
+    let ultimoValor = i;
+    for (let j = 0; j <= b.length; j++) {
+      if (i === 0) {
+        custos[j] = j;
+      } else if (j > 0) {
+        let novoValor = custos[j - 1];
+        if (a.charAt(i - 1) !== b.charAt(j - 1)) {
+          novoValor = Math.min(
+            Math.min(novoValor, ultimoValor),
+            custos[j]
+          ) + 1;
+        }
+        custos[j - 1] = ultimoValor;
+        ultimoValor = novoValor;
+      }
+    }
+    if (i > 0) custos[b.length] = ultimoValor;
+  }
+  return custos[b.length];
+}
+
+
 /* RENDER */
 function render(filtro = "") {
   lista.innerHTML = "";
 
   receitas
-    .filter(r => r.nome.toLowerCase().includes(filtro.toLowerCase()))
+    .filter(r => {
+  const termo = normalizar(filtro);
+  const nome = normalizar(r.nome);
+
+  if (!termo) return true;
+
+  return (
+    nome.includes(termo) ||
+    similaridade(termo, nome) <= 3
+  );
+})
+
     .forEach(r => {
       const div = document.createElement("div");
       div.className = "card";
@@ -1866,3 +1912,5 @@ render();
 
 </body>
 </html>
+
+
