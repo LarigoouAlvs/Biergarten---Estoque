@@ -50,39 +50,70 @@ table{
   width:100%;
   border-collapse:collapse;
   table-layout:fixed;
-  margin-bottom:14px;
+  margin-bottom:8px; /* menos espaço entre semanas */
 }
 
+/* CÉLULAS GERAIS */
 th, td{
   border:1px solid var(--borda);
-  padding:3px 2px;
-  font-size:10.5px;
+  padding:2px 2px;          /* MENOS ALTURA */
+  font-size:10px;           /* levemente menor */
+  line-height:1.15;         /* compacta linhas */
   text-align:center;
   vertical-align:middle;
 }
 
+/* CABEÇALHO */
 th{
   background:var(--amarelo);
   color:#000;
+  font-weight:bold;
+  padding:2px 1px;          /* cabeçalho mais fino */
+  font-size:9.8px;
 }
 
+/* COLUNA NOME */
 .nome{
-  width:65px;
+  width:52px;               /* mais estreita */
+  min-width:52px;
+  max-width:52px;
   font-weight:bold;
   background:#111;
+  font-size:9.8px;
+  padding:2px 1px;
+  white-space:nowrap;
 }
 
+/* FOLGA */
 .folga{
   background:var(--folga);
   color:#000;
   font-weight:bold;
 }
 
+/* OBS */
 .obs{
+  margin-top:6px;
   text-align:center;
-  font-size:11px;
+  font-size:10px;
   opacity:.7;
 }
+
+/* AJUSTE EXTRA PARA TELAS MENORES / TABLET */
+@media (max-width: 1024px){
+  th, td{
+    font-size:9.5px;
+    padding:2px 1px;
+  }
+
+  .nome{
+    width:48px;
+    min-width:48px;
+    max-width:48px;
+    font-size:9.5px;
+  }
+}
+
 </style>
 </head>
 
