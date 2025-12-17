@@ -121,13 +121,73 @@ input, select, button {
   padding: 0;
   line-height: 1;
 }
+.menu-toggle {
+  display: none;
+  background: var(--amarelo);
+  color: #000;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .acoes-topo {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: var(--preto80);
+    border-radius: 8px;
+    padding: 10px;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+  }
+
+  .acoes-topo a {
+    width: 100%;
+    text-align: left;
+  }
+
+  .acoes-topo.active {
+    display: flex;
+  }
+}
+
  
 </style>
 </head>
 
+<script>
+  function toggleMenu() {
+    document.getElementById("menu").classList.toggle("active");
+  }
+</script>
+
 <body>
 
-<header> <h1>🍺 Biergarten</h1> <div class="acoes-topo"> <a href="escala.html">📅 Escala</a> <a href="relatorios.html">📊 Relatórios</a> <a href="hortifruti.html">🥬 Hortifrúti</a> <a href="drinks.html">🍸 Receitas</a> </div> </header>
+<header>
+  <h1>🍺 Biergarten</h1>
+
+  <!-- BOTÃO MOBILE -->
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+  <!-- MENU -->
+  <div class="acoes-topo" id="menu">
+    <a href="escala.html">📅 Escala</a>
+    <a href="relatorios.html">📊 Relatórios</a>
+    <a href="hortifruti.html">🥬 Hortifrúti</a>
+    <a href="drinks.html">🍸 Receitas</a>
+  </div>
+</header>
+
 
 <input type="text" id="busca" placeholder="🔍 Buscar produto...">
 <div id="lista"></div>
@@ -314,4 +374,3 @@ atualizarResumo();
 
 </body>
 </html>
-
