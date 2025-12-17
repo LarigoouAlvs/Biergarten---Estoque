@@ -242,7 +242,9 @@ function montarTabela(dias){
   funcionarios.forEach(nome=>{
     html += `<tr><td class="nome">${nome}</td>`;
     dias.forEach(d=>{
-      const dataObj = new Date(ano, mes, d);
+      const [y, m, d] = data.split("-").map(Number);
+const dataObj = new Date(y, m - 1, d);
+
       const ds = diasSemana[dataObj.getDay()];
       const dataISO = `${ano}-${String(mes+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 
@@ -263,23 +265,22 @@ carregarEscalaFirebase();
 async function carregarEscalaFirebase(){
   const mesDoc = `${ano}-${String(mes+1).padStart(2,"0")}`;
   const snap = await getDoc(doc(db, "escala", mesDoc));
+  const dados = snap.exists() ? snap.data() : {};
 
   document.querySelectorAll("td[data-nome]").forEach(td=>{
     const nome = td.dataset.nome;
-    const data = td.dataset.data;
+    const dataISO = td.dataset.data;
 
     let valor = "-";
 
-    if (snap.exists()) {
-      const dados = snap.data();
-      if (dados[data] && dados[data][nome]) {
-        valor = dados[data][nome];
-      }
+    // 🔹 1) Firebase tem prioridade
+    if (dados[dataISO] && dados[dataISO][nome]) {
+      valor = dados[dataISO][nome];
     }
-
-    // fallback para modelo
-    if (valor === "-") {
-      const dataObj = new Date(data);
+    // 🔹 2) fallback seguro para o modelo
+    else {
+      const [y, m, d] = dataISO.split("-").map(Number);
+      const dataObj = new Date(y, m - 1, d); // ✅ SEM BUG
       const ds = diasSemana[dataObj.getDay()];
       valor = modelo[nome][ds] || "-";
     }
@@ -293,6 +294,7 @@ async function carregarEscalaFirebase(){
     }
   });
 }
+
 
 
 // ===== EDIÇÃO COM SENHA (ADMIN) =====
@@ -354,4 +356,5 @@ if (nome && data) {
 
 </body>
 </html>
+
 
