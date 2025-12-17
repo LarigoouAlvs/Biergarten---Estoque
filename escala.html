@@ -160,9 +160,9 @@ window.getDoc = getDoc;
 
 <script>
 /* === DATA ATUAL (BRASIL) === */
-const hoje = new Date();
-const ano = hoje.getFullYear();
-const mes = hoje.getMonth();
+const ano = 2025;
+const mes = 11; // dezembro (0 = janeiro)
+
 
 const nomeMes = hoje.toLocaleString("pt-BR", { month: "long" }).toUpperCase();
 document.getElementById("titulo").innerText = `ESCALA MENSAL – ${nomeMes}`;
@@ -351,6 +351,7 @@ if (nome && data) {
 
 </body>
 </html>
+
 
 
 
