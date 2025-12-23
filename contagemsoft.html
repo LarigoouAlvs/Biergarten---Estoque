@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Biergarten | Contagem</title>
+
+<style>
+:root{
+  --amarelo:#F4C430;
+  --preto:#1a1a1a;
+  --preto80:#262626;
+  --borda:#444;
+}
+
+body{
+  background:var(--preto);
+  color:#fff;
+  font-family:Arial, sans-serif;
+  padding:20px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+header h1{ color:var(--amarelo); margin:0; }
+
+header a{
+  background:var(--amarelo);
+  color:#000;
+  padding:8px 12px;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+th, td{
+  border:1px solid var(--borda);
+  padding:6px;
+  text-align:center;
+}
+
+th{
+  background:var(--amarelo);
+  color:#000;
+}
+
+td.nome{
+  text-align:left;
+  font-weight:bold;
+}
+
+button{
+  background:var(--amarelo);
+  border:none;
+  padding:4px 8px;
+  border-radius:4px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.acoes{
+  display:flex;
+  gap:4px;
+  justify-content:center;
+}
+
+footer{
+  margin-top:20px;
+}
+
+footer button{
+  width:100%;
+  padding:12px;
+  font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📦 Contagem de Softs</h1>
+  <a href="index.html">⬅ Voltar</a>
+</header>
+
+<table id="tabela">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Mínimo</th>
+      <th>Estoque</th>
+      <th>Bar</th>
+      <th>Pedido</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<footer>
+  <button id="salvar">💾 Salvar Contagem</button>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
+  authDomain: "biergarten-f5756.firebaseapp.com",
+  projectId: "biergarten-f5756",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const tipoContagem = "softs";
+
+
+/* 🔢 ITENS (EXEMPLO) */
+const itens = [
+
+{ nome:"Água com Gás 500ml",  minimo:12 },
+{ nome:"Água sem Gás 500ml",  minimo:12 },
+{ nome:"Coca-Cola 350ml",  minimo:12 },
+{ nome:"Coca-Cola Zero 350ml",  minimo:6 },
+{ nome:"Guaraná 350ml",  minimo:6 },
+{ nome:"Guaraná Zero 350ml",  minimo:6 },
+{ nome:"H2O Limão 500ml",  minimo:12 },
+{ nome:"H2O Limoneto 500ml",  minimo:12 },
+{ nome:"Red Bull Tradicional 250ml",  minimo:6 },
+{ nome:"Red Bull Tropical 250ml",  minimo:4 },
+{ nome:"Red Bull Zero 250ml",  minimo:4 },
+{ nome:"Schweppes Citrus 350ml",  minimo:6 },
+{ nome:"Sprite 350ml",  minimo:6 },
+{ nome:"Fanta Laranja 350ml",  minimo:6 },
+{ nome:"Tônica Schweppes 350ml",  minimo:6 },
+{ nome:"Tônica Zero Schweppes 350ml",  minimo:6 },
+{ nome:"Água Perrier 350ml",  minimo:1 },
+{ nome:"Acqua Panna",  minimo:1 },
+{ nome:"San Pellegrino",  minimo:1 },
+
+
+{ nome:"Cerveja Long Neck",  minimo:1 },
+{ nome:"Heineken Zero 355ml",  minimo:24 },
+{ nome:"Stella Artois Gold 355ml",  minimo:24 },
+{ nome:"Stella Artois 355ml",  minimo:24 },
+
+
+{ nome:"Café Leggero ou Finezzo",  minimo:3 },
+{ nome:"Café Descafeinado",  minimo:1 },
+{ nome:"Café Ristretto",  minimo:3 },
+
+
+{ nome:"Refrigerante 2L Coca-Cola",  minimo:2 },
+{ nome:"Refrigerante 2L Guaraná",  minimo:2 },
+{ nome:"Refrigerante 2L Brahma",  minimo:2 },
+
+
+
+{ nome:"Chá Frutas Vermelhas",  minimo:1 },
+{ nome:"Chá Frutas Silvestres",  minimo:1 },
+{ nome:"Chá Camomila",  minimo:1 },
+{ nome:"Chá Hortelã",  minimo:1 },
+{ nome:"Chá Preto",  minimo:1 },
+{ nome:"Chá Verde",  minimo:1 },
+{ nome:"Chá Branco",  minimo:1 },
+
+
+{ nome:"Suco Maguary Abacaxi 500ml",  minimo:4 },
+{ nome:"Leite de Coco Ducoco 200ml",  minimo:8 },
+{ nome:"Leite Condensado 395g",  minimo:4 },
+{ nome:"Canudo Mexedor",  minimo:3 },
+{ nome:"Canudo Flexível",  minimo:4 },
+{ nome:"Copo Descartável 500ml",  minimo:2 },
+{ nome:"Copo Descartável 200ml",  minimo:2 },
+{ nome:"Cápsula de Chantilly",  minimo:1 },
+{ nome:"Cereja",  minimo:1 },
+{ nome:"Emulsificante 200g",  minimo:1 },
+{ nome:"Palito para Café",  minimo:1 },
+{ nome:"Coco Queimado",  minimo:1 },
+{ nome:"Açúcar 1kg",  minimo:10 },
+{ nome:"Suco de Uva 3L",  minimo:4 },
+{ nome:"Esponja para Copos",  minimo:3 },
+{ nome:"Pêssego em Calda 850g",  minimo:1 },
+
+
+
+];
+
+const estado = {};
+
+const tbody = document.querySelector("tbody");
+
+function render(){
+  tbody.innerHTML = "";
+
+  itens.forEach(item=>{
+    estado[item.nome] ??= { estoque:0, bar:0 };
+
+    const total = estado[item.nome].estoque + estado[item.nome].bar;
+    const pedido = Math.max(item.minimo - total, 0);
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="nome">${item.nome}</td>
+      <td>${item.minimo}</td>
+
+      <td>
+        <div class="acoes">
+          <button onclick="alt('${item.nome}','estoque',-1)">-</button>
+          ${estado[item.nome].estoque}
+          <button onclick="alt('${item.nome}','estoque',1)">+</button>
+        </div>
+      </td>
+
+      <td>
+        <div class="acoes">
+          <button onclick="alt('${item.nome}','bar',-1)">-</button>
+          ${estado[item.nome].bar}
+          <button onclick="alt('${item.nome}','bar',1)">+</button>
+        </div>
+      </td>
+
+      <td>${pedido}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+window.alt = (nome, tipo, valor)=>{
+  estado[nome][tipo] = Math.max(0, estado[nome][tipo] + valor);
+  render();
+};
+
+render();
+
+/* 💾 SALVAR */
+document.getElementById("salvar").onclick = async () => {
+  const agora = new Date();
+
+  // ID único (data + hora)
+  const id = Date.now().toString();
+
+ await setDoc(
+    doc(collection(db, "contagens"), id),
+    {
+       data: agora,
+    tipo: tipoContagem,
+    itens: estado
+    }
+  );
+
+  alert("Contagem salva 🔥");
+};
+
+
+</script>
+
+</body>
+</html>
