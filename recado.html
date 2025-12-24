@@ -161,7 +161,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const colRef = collection(db, "recados");
 
-const SENHA_ADMIN = "1234"; 
+const SENHA_ADMIN = "1324"; 
 
 document.getElementById("btnEnviar").onclick = async () => {
     const texto = document.getElementById("textoRecado").value;
@@ -208,4 +208,5 @@ window.apagarRecado = async (id) => {
 };
 </script>
 </body>
+
 </html>
