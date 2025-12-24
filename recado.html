@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Biergarten | Mural de Recados</title>
+<style>
+:root{
+  --amarelo:#F4C430;
+  --preto:#1a1a1a;
+  --preto80:#262626;
+  --borda:#444;
+}
+
+body{
+  background:var(--preto);
+  color:#fff;
+  font-family:Arial, sans-serif;
+  padding:20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+header h1{ color:var(--amarelo); margin:0; }
+
+header a{
+  background:var(--amarelo);
+  color:#000;
+  padding:8px 12px;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.form-recado {
+  background: var(--preto80);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  margin-bottom: 30px;
+}
+
+textarea {
+  width: 100%;
+  height: 80px;
+  background: #333;
+  border: 1px solid var(--borda);
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: none;
+  margin-bottom: 10px;
+}
+
+/* Botão principal de postar */
+.btn-postar {
+  background: var(--amarelo);
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  color: #000;
+}
+
+#mural {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-recado {
+  background: var(--preto80);
+  border-left: 4px solid var(--amarelo);
+  padding: 15px;
+  border-radius: 4px;
+  position: relative; /* Necessário para o botão de apagar */
+}
+
+.card-recado p {
+  margin: 0;
+  padding-right: 30px; /* Abre espaço para a lixeira no canto */
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.data {
+  display: block;
+  font-size: 10px;
+  color: #888;
+  margin-top: 10px;
+}
+
+/* BOTÃO DE APAGAR CORRIGIDO */
+.btn-apagar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none !important; /* Remove o fundo amarelo */
+  border: none !important;
+  color: #ff4444 !important;
+  cursor: pointer;
+  font-size: 18px !important;
+  width: auto !important; /* Impede de ocupar 100% */
+  padding: 5px !important;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.btn-apagar:hover {
+  transform: scale(1.2);
+  color: #ff6666 !important;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📝 Mural</h1>
+  <a href="index.html">⬅ Voltar</a>
+</header>
+
+<div class="form-recado">
+  <textarea id="textoRecado" placeholder="Digite seu recado aqui..."></textarea>
+  <button id="btnEnviar" class="btn-postar">🚀 Postar Recado</button>
+</div>
+
+<div id="mural"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    onSnapshot, 
+    query, 
+    orderBy, 
+    doc, 
+    deleteDoc 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
+  authDomain: "biergarten-f5756.firebaseapp.com",
+  projectId: "biergarten-f5756",
+  storageBucket: "biergarten-f5756.firebasestorage.app",
+  messagingSenderId: "391344176716",
+  appId: "1:391344176716:web:db69d2b7d99fca2a377ee9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const colRef = collection(db, "recados");
+
+const SENHA_ADMIN = "1234"; 
+
+document.getElementById("btnEnviar").onclick = async () => {
+    const texto = document.getElementById("textoRecado").value;
+    if(!texto) return alert("Escreva algo antes!");
+    
+    const senha = prompt("Digite a senha para postar:");
+    if(senha === SENHA_ADMIN) {
+        await addDoc(colRef, { texto: texto, data: new Date() });
+        document.getElementById("textoRecado").value = "";
+    } else {
+        alert("Senha incorreta!");
+    }
+};
+
+const q = query(colRef, orderBy("data", "desc"));
+onSnapshot(q, (snapshot) => {
+    const mural = document.getElementById("mural");
+    mural.innerHTML = "";
+    snapshot.forEach((docSnap) => {
+        const item = docSnap.data();
+        const id = docSnap.id;
+        const dataFormatada = item.data ? item.data.toDate().toLocaleString('pt-BR') : "";
+
+        const card = document.createElement("div");
+        card.className = "card-recado";
+        card.innerHTML = `
+            <button class="btn-apagar" title="Apagar" onclick="apagarRecado('${id}')">🗑️</button>
+            <p>${item.texto}</p>
+            <span class="data">${dataFormatada}</span>
+        `;
+        mural.appendChild(card);
+    });
+});
+
+window.apagarRecado = async (id) => {
+    const senha = prompt("Senha de Admin para apagar:");
+    if(senha === SENHA_ADMIN) {
+        if(confirm("Deseja apagar este recado?")) {
+            await deleteDoc(doc(db, "recados", id));
+        }
+    } else {
+        alert("Senha incorreta!");
+    }
+};
+</script>
+</body>
+</html>
