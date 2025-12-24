@@ -23,102 +23,109 @@ body {
   padding: 20px;
 }
 
-/* ... mantenha suas variáveis :root ... */
-
 header {
-  display: flex;
-  flex-direction: column; /* No tablet/mobile empilha o título e o menu */
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.topo-desktop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  margin-bottom: 20px;
 }
 
-/* CONTAINER DO MENU */
-.acoes-topo {
-  display: grid;
-  /* Criar colunas automáticas que se ajustam ao tamanho da tela */
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
-  width: 100%;
+header h1 {
+  margin: 0;
+  color: var(--amarelo);
 }
 
-.acoes-topo a {
-  background: var(--preto80);
-  color: #fff;
-  padding: 12px 8px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: center;
-  border: 1px solid var(--borda);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
-}
-
-.acoes-topo a:hover {
+header a {
   background: var(--amarelo);
   color: #000;
+  padding: 10px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-/* AJUSTE PARA CELULAR (Telas bem pequenas) */
-@media (max-width: 600px) {
-  .menu-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--amarelo);
-    border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
-    font-size: 22px;
-    cursor: pointer;
-  }
-
-  .acoes-topo {
-    display: none; /* Esconde no celular para usar o toggle */
-    grid-template-columns: 1fr 1fr; /* Duas colunas no celular quando aberto */
-    position: absolute;
-    top: 80px;
-    left: 20px;
-    right: 20px;
-    width: calc(100% - 40px);
-    background: var(--preto);
-    z-index: 1000;
-    padding: 10px;
-    border: 1px solid var(--amarelo);
-  }
-
-  .acoes-topo.active {
-    display: grid;
-  }
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
 }
 
-/* AJUSTE PARA TABLET (Telas médias) */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .menu-toggle { display: none; }
-  .acoes-topo {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 botões por linha no tablet */
-  }
+.produto {
+  background: var(--preto80);
+  padding: 12px;
+  border-left: 6px solid var(--amarelo);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* DESKTOP */
-@media (min-width: 1025px) {
-  header { flex-direction: row; }
-  .menu-toggle { display: none; }
-  .acoes-topo {
-    grid-template-columns: repeat(8, 1fr); /* Todos em uma linha no PC */
-  }
+.botoes button {
+  width: auto;
+  margin-left: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#resumo {
+  background: var(--preto80);
+  padding: 16px;
+  margin-top: 20px;
+  border-radius: 10px;
+  border-top: 4px solid var(--amarelo);
+}
+
+.hidden { display: none; }
+
+#finalizar {
+  background: var(--amarelo);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#finalizar:disabled {
+  background: #777;
+  cursor: not-allowed;
+
+}
+  #itens {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#itens li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.texto-item {
+  flex: 1;               /* 🔑 ocupa o espaço disponível */
+  white-space: nowrap;   /* 🔑 não quebra linha */
+}
+
+.lixeira {
+  flex-shrink: 0;        /* 🔑 nunca encolhe */
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #ff4d4d;
+  padding: 0;
+  line-height: 1;
+}
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 }
 
 /* BOTÃO ☰ */
