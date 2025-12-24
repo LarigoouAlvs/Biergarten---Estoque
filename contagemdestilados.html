@@ -107,227 +107,160 @@ footer button{
 </table>
 
 <footer>
-  <button id="salvar">💾 Salvar Contagem</button>
+  <button id="exportar">📄 Exportar Contagem</button>
 </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+</footer>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
-  authDomain: "biergarten-f5756.firebaseapp.com",
-  projectId: "biergarten-f5756",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const tipoContagem = "destilados";
-
-
-/* 🔢 ITENS (EXEMPLO) */
+<script>
+/* 🔢 ITENS */
 const itens = [
-
-
-{ nome:"Bacardi Carta Blanca Rum", dosesPorGarrafa:14, minimoGarrafas:3 },
-{ nome:"Bacardi Carta Oro Rum", dosesPorGarrafa:19, minimoGarrafas:2 },
-{ nome:"Malibu Rum", dosesPorGarrafa:14, minimoGarrafas:1 },
-
-{ nome:"Cachaça Ypióca Ouro", dosesPorGarrafa:19, minimoGarrafas:2 },
-{ nome:"Cachaça Ypióca Prata", dosesPorGarrafa:19, minimoGarrafas:2 },
-{ nome:"Refazenda Prata", dosesPorGarrafa:14, minimoGarrafas:2 },
-{ nome:"Refazenda Ouro", dosesPorGarrafa:14, minimoGarrafas:1 },
-{ nome:"Refazenda Amburana", dosesPorGarrafa:14, minimoGarrafas:1 },
-{ nome:"Refazenda Jambu", dosesPorGarrafa:14, minimoGarrafas:1 },
-{ nome:"Sagatiba Aguardente Pura", dosesPorGarrafa:14, minimoGarrafas:3 },
-{ nome:"Velho Barreiro", dosesPorGarrafa:19, minimoGarrafas:4 },
-
-{ nome:"Conhaque Domecq", dosesPorGarrafa:20, minimoGarrafas:1 },
-
-{ nome:"Campari", dosesPorGarrafa:18, minimoGarrafas:3 },
-{ nome:"Underberg", dosesPorGarrafa:18, minimoGarrafas:2 },
-{ nome:"Angostura Aromatic", dosesPorGarrafa:20, minimoGarrafas:1 },
-{ nome:"Angostura Orange", dosesPorGarrafa:20, minimoGarrafas:1 },
-
-{ nome:"Aperol", dosesPorGarrafa:15, minimoGarrafas:4 },
-{ nome:"Lillet Blanc", dosesPorGarrafa:15, minimoGarrafas:1 },
-{ nome:"Cynar", dosesPorGarrafa:28, minimoGarrafas:1 },
-
-
-{ nome:"Gin Tanqueray", dosesPorGarrafa:15, minimoGarrafas:6 },
-{ nome:"Gin Verf London Dry", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Gin Amazzoni", dosesPorGarrafa:15, minimoGarrafas:1 },
-{ nome:"Gin Beefeater", dosesPorGarrafa:15, minimoGarrafas:1 },
-{ nome:"Gin Hendricks", dosesPorGarrafa:15, minimoGarrafas:1 },
-{ nome:"Gin The Botanist", dosesPorGarrafa:14, minimoGarrafas:1 },
-
-
-{ nome:"Jägermeister", dosesPorGarrafa:14, minimoGarrafas:3 },
-{ nome:"Licor 43", dosesPorGarrafa:14, minimoGarrafas:3 },
-{ nome:"Amaretto Dell Orso", dosesPorGarrafa:14, minimoGarrafas:1 },
-{ nome:"Frangelico", dosesPorGarrafa:14, minimoGarrafas:1 },
-{ nome:"Amarula", dosesPorGarrafa:15, minimoGarrafas:3 },
-{ nome:"Baileys", dosesPorGarrafa:15, minimoGarrafas:1 },
-{ nome:"St Germain", dosesPorGarrafa:15, minimoGarrafas:3 },
-{ nome:"Cointreau", dosesPorGarrafa:14, minimoGarrafas:2 },
-{ nome:"Licor Stok Fino", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Licor Stok Creme Cassis", dosesPorGarrafa:14, minimoGarrafas:3 },
-
-
-{ nome:"Martini Bianco", dosesPorGarrafa:14, minimoGarrafas:2 },
-{ nome:"Martini Dry", dosesPorGarrafa:14, minimoGarrafas:2 },
-{ nome:"Martini Rosso", dosesPorGarrafa:14, minimoGarrafas:2 },
-{ nome:"Carpano Clássico", dosesPorGarrafa:20, minimoGarrafas:2 },
-
-
-{ nome:"Steinhager Double W", dosesPorGarrafa:18, minimoGarrafas:6 },
-{ nome:"Steinhager Schlichte Alemão", dosesPorGarrafa:14, minimoGarrafas:2 },
-
-
-{ nome:"Tequila José Cuervo Ouro", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Tequila José Cuervo Silver", dosesPorGarrafa:15, minimoGarrafas:2 },
-
-
-{ nome:"Vodka Absolut", dosesPorGarrafa:20, minimoGarrafas:3 },
-{ nome:"Vodka Smirnoff", dosesPorGarrafa:20, minimoGarrafas:12 },
-{ nome:"Grey Goose", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Belvedere", dosesPorGarrafa:14, minimoGarrafas:1 },
-{ nome:"Ketel One", dosesPorGarrafa:20, minimoGarrafas:1 },
-{ nome:"Stolichnaya", dosesPorGarrafa:20, minimoGarrafas:1 },
-{ nome:"Absolut Citron", dosesPorGarrafa:15, minimoGarrafas:2 },
-
-
-{ nome:"Jack Daniel’s", dosesPorGarrafa:20, minimoGarrafas:1 },
-{ nome:"Jack Daniel’s Honey", dosesPorGarrafa:20, minimoGarrafas:1 },
-{ nome:"Wild Turkey", dosesPorGarrafa:20, minimoGarrafas:1 },
-
-
-{ nome:"Hibiki Harmony", dosesPorGarrafa:14, minimoGarrafas:1 },
-{ nome:"Yamazaki 12 anos", dosesPorGarrafa:14, minimoGarrafas:1 },
-
-
-
-{ nome:"Jameson", dosesPorGarrafa:14, minimoGarrafas:1 },
-
-// XAROPES MONIN
-{ nome:"Xarope Monin Grenadine", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Xarope Monin Cranberry", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Xarope Monin Maçã Verde", dosesPorGarrafa:15, minimoGarrafas:3 },
-{ nome:"Xarope Monin Morango", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Xarope Monin Maracujá", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Xarope Monin Pêssego", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Xarope Monin Rosas", dosesPorGarrafa:15, minimoGarrafas:2 },
-{ nome:"Xarope Monin Tangerina", dosesPorGarrafa:15, minimoGarrafas:2 },
-
-// OUTROS XAROPES
-{ nome:"Xarope 1883 Cranberry", dosesPorGarrafa:20, minimoGarrafas:1 },
-
-
+    { nome:"Bacardi Carta Blanca Rum", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Bacardi Carta Oro Rum", dosesPorGarrafa:19, minimoGarrafas:2 },
+    { nome:"Malibu Rum", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Cachaça Ypióca Ouro", dosesPorGarrafa:19, minimoGarrafas:2 },
+    { nome:"Cachaça Ypióca Prata", dosesPorGarrafa:19, minimoGarrafas:2 },
+    { nome:"Refazenda Prata", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Refazenda Ouro", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Refazenda Amburana", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Refazenda Jambu", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Sagatiba Aguardente Pura", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Velho Barreiro", dosesPorGarrafa:19, minimoGarrafas:4 },
+    { nome:"Conhaque Domecq", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Campari", dosesPorGarrafa:18, minimoGarrafas:3 },
+    { nome:"Underberg", dosesPorGarrafa:18, minimoGarrafas:2 },
+    { nome:"Angostura Aromatic", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Angostura Orange", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Aperol", dosesPorGarrafa:15, minimoGarrafas:4 },
+    { nome:"Lillet Blanc", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Cynar", dosesPorGarrafa:28, minimoGarrafas:1 },
+    { nome:"Gin Tanqueray", dosesPorGarrafa:15, minimoGarrafas:6 },
+    { nome:"Gin Verf London Dry", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Gin Amazzoni", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Gin Beefeater", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Gin Hendricks", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Gin The Botanist", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Jägermeister", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Licor 43", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Amaretto Dell Orso", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Frangelico", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Amarula", dosesPorGarrafa:15, minimoGarrafas:3 },
+    { nome:"Baileys", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"St Germain", dosesPorGarrafa:15, minimoGarrafas:3 },
+    { nome:"Cointreau", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Licor Stok Fino", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Licor Stok Creme Cassis", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Martini Bianco", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Martini Dry", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Martini Rosso", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Carpano Clássico", dosesPorGarrafa:20, minimoGarrafas:2 },
+    { nome:"Steinhager Double W", dosesPorGarrafa:18, minimoGarrafas:6 },
+    { nome:"Steinhager Schlichte Alemão", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Tequila José Cuervo Ouro", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Tequila José Cuervo Silver", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Vodka Absolut", dosesPorGarrafa:20, minimoGarrafas:3 },
+    { nome:"Vodka Smirnoff", dosesPorGarrafa:20, minimoGarrafas:12 },
+    { nome:"Grey Goose", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Belvedere", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Ketel One", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Stolichnaya", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Absolut Citron", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Jack Daniel’s", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Jack Daniel’s Honey", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Wild Turkey", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Hibiki Harmony", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Yamazaki 12 anos", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Jameson", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Xarope Monin Grenadine", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Cranberry", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Maçã Verde", dosesPorGarrafa:15, minimoGarrafas:3 },
+    { nome:"Xarope Monin Morango", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Maracujá", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Pêssego", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Rosas", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Tangerina", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope 1883 Cranberry", dosesPorGarrafa:20, minimoGarrafas:1 }
 ];
 
 const estado = {};
-
 const tbody = document.querySelector("tbody");
 
 function render(){
   tbody.innerHTML = "";
 
-  itens.forEach(item=>{
-    estado[item.nome] ??= { estoque:0, bar:0 };
+  itens.forEach(item => {
+    estado[item.nome] ??= { estoque: 0, bar: 0 };
 
     const minimoDoses = item.minimoGarrafas * item.dosesPorGarrafa;
-const totalDoses = estado[item.nome].estoque + estado[item.nome].bar;
-const pedidoDoses = Math.max(minimoDoses - totalDoses, 0);
-
+    const totalDoses = estado[item.nome].estoque + estado[item.nome].bar;
+    const pedidoDoses = Math.max(minimoDoses - totalDoses, 0);
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="nome">${item.nome}</td>
       <td>${minimoDoses} doses</td>
-
-    <td>
-  <div class="acoes">
-    <button onclick="alt('${item.nome}','estoque',-1)">-1</button>
-    <button onclick="alt('${item.nome}','estoque',-${item.dosesPorGarrafa})">-🍾</button>
-
-    <input 
-      type="number" 
-      min="0"
-      value="${estado[item.nome].estoque}"
-      onchange="setValor('${item.nome}','estoque',this.value)"
-      style="width:55px;text-align:center;"
-    >
-
-    <button onclick="alt('${item.nome}','estoque',${item.dosesPorGarrafa})">+🍾</button>
-    <button onclick="alt('${item.nome}','estoque',1)">+1</button>
-  </div>
-</td>
-
       <td>
-  <div class="acoes">
-    <button onclick="alt('${item.nome}','bar',-1)">-1</button>
-    <button onclick="alt('${item.nome}','bar',-${item.dosesPorGarrafa})">-🍾</button>
-
-    <input 
-      type="number" 
-      min="0"
-      value="${estado[item.nome].bar}"
-      onchange="setValor('${item.nome}','bar',this.value)"
-      style="width:55px;text-align:center;"
-    >
-
-    <button onclick="alt('${item.nome}','bar',${item.dosesPorGarrafa})">+🍾</button>
-    <button onclick="alt('${item.nome}','bar',1)">+1</button>
-  </div>
-</td>
-
-
+        <div class="acoes">
+          <button onclick="alt('${item.nome}','estoque',-1)">-1</button>
+          <button onclick="alt('${item.nome}','estoque',-${item.dosesPorGarrafa})">-🍾</button>
+          <input type="number" min="0" value="${estado[item.nome].estoque}" onchange="setValor('${item.nome}','estoque',this.value)" style="width:55px;text-align:center;">
+          <button onclick="alt('${item.nome}','estoque',${item.dosesPorGarrafa})">+🍾</button>
+          <button onclick="alt('${item.nome}','estoque',1)">+1</button>
+        </div>
+      </td>
+      <td>
+        <div class="acoes">
+          <button onclick="alt('${item.nome}','bar',-1)">-1</button>
+          <button onclick="alt('${item.nome}','bar',-${item.dosesPorGarrafa})">-🍾</button>
+          <input type="number" min="0" value="${estado[item.nome].bar}" onchange="setValor('${item.nome}','bar',this.value)" style="width:55px;text-align:center;">
+          <button onclick="alt('${item.nome}','bar',${item.dosesPorGarrafa})">+🍾</button>
+          <button onclick="alt('${item.nome}','bar',1)">+1</button>
+        </div>
+      </td>
       <td>${pedidoDoses} doses</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-window.alt = (nome, tipo, valor)=>{
+window.alt = (nome, tipo, valor) => {
   estado[nome][tipo] = Math.max(0, estado[nome][tipo] + valor);
   render();
 };
 
-window.setValor = (nome, tipo, valor)=>{
+window.setValor = (nome, tipo, valor) => {
   const v = parseInt(valor);
   estado[nome][tipo] = isNaN(v) || v < 0 ? 0 : v;
   render();
 };
 
+/* 📊 EXPORTAR CSV */
+document.getElementById("exportar").onclick = () => {
+  let csv = "Item;Minimo (Doses);Estoque (Doses);Bar (Doses);Pedido (Doses);Sugestao Garrafas\n";
 
-render();
+  itens.forEach(item => {
+    const minimoDoses = item.minimoGarrafas * item.dosesPorGarrafa;
+    const totalDoses = estado[item.nome].estoque + estado[item.nome].bar;
+    const pedidoDoses = Math.max(minimoDoses - totalDoses, 0);
+    const sugestaoGarrafas = (pedidoDoses / item.dosesPorGarrafa).toFixed(1);
+    
+    csv += `${item.nome};${minimoDoses};${estado[item.nome].estoque};${estado[item.nome].bar};${pedidoDoses};${sugestaoGarrafas}\n`;
+  });
 
-/* 💾 SALVAR */
-document.getElementById("salvar").onclick = async () => {
-  const agora = new Date();
-
-  // ID único (data + hora)
-  const id = Date.now().toString();
-
-  await setDoc(
-    doc(collection(db, "contagens"), id),
-    {
-       data: agora,
-    tipo: tipoContagem,
-    itens: estado
-    }
-  );
-
-  alert("Contagem salva 🔥");
+  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const data = new Date().toLocaleDateString().replace(/\//g, '-');
+  
+  link.setAttribute("href", url);
+  link.setAttribute("download", `contagem_destilados_${data}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
-
+render();
 </script>
 
 </body>
