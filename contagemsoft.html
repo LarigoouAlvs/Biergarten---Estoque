@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Biergarten | Contagem</title>
+<title>Biergarten | Contagem Softs</title>
 
 <style>
 :root{
@@ -72,6 +72,22 @@ button{
   display:flex;
   gap:4px;
   justify-content:center;
+  align-items:center;
+}
+
+input[type=number] {
+  background: #333;
+  color: #fff;
+  border: 1px solid var(--borda);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+/* Remove setas padrão do input number */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 footer{
@@ -98,8 +114,8 @@ footer button{
     <tr>
       <th>Item</th>
       <th>Mínimo</th>
-      <th>Estoque</th>
-      <th>Bar</th>
+      <th>Estoque (Doses/Un)</th>
+      <th>Bar (Doses/Un)</th>
       <th>Pedido</th>
     </tr>
   </thead>
@@ -107,110 +123,74 @@ footer button{
 </table>
 
 <footer>
-  <button id="salvar">💾 Salvar Contagem</button>
+  <button id="exportar">📄 Exportar Contagem</button>
 </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
-  authDomain: "biergarten-f5756.firebaseapp.com",
-  projectId: "biergarten-f5756",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const tipoContagem = "softs";
-
-
-/* 🔢 ITENS (EXEMPLO) */
+<script>
+/* 🔢 ITENS */
 const itens = [
-
-{ nome:"Água com Gás 500ml",  minimo:12 },
-{ nome:"Água sem Gás 500ml",  minimo:12 },
-{ nome:"Coca-Cola 350ml",  minimo:12 },
-{ nome:"Coca-Cola Zero 350ml",  minimo:6 },
-{ nome:"Guaraná 350ml",  minimo:6 },
-{ nome:"Guaraná Zero 350ml",  minimo:6 },
-{ nome:"H2O Limão 500ml",  minimo:12 },
-{ nome:"H2O Limoneto 500ml",  minimo:12 },
-{ nome:"Red Bull Tradicional 250ml",  minimo:6 },
-{ nome:"Red Bull Tropical 250ml",  minimo:4 },
-{ nome:"Red Bull Zero 250ml",  minimo:4 },
-{ nome:"Schweppes Citrus 350ml",  minimo:6 },
-{ nome:"Sprite 350ml",  minimo:6 },
-{ nome:"Fanta Laranja 350ml",  minimo:6 },
-{ nome:"Tônica Schweppes 350ml",  minimo:6 },
-{ nome:"Tônica Zero Schweppes 350ml",  minimo:6 },
-{ nome:"Água Perrier 350ml",  minimo:1 },
-{ nome:"Acqua Panna",  minimo:1 },
-{ nome:"San Pellegrino",  minimo:1 },
-
-
-{ nome:"Cerveja Long Neck",  minimo:1 },
-{ nome:"Heineken Zero 355ml",  minimo:24 },
-{ nome:"Stella Artois Gold 355ml",  minimo:24 },
-{ nome:"Stella Artois 355ml",  minimo:24 },
-
-
-{ nome:"Café Leggero ou Finezzo",  minimo:3 },
-{ nome:"Café Descafeinado",  minimo:1 },
-{ nome:"Café Ristretto",  minimo:3 },
-
-
-{ nome:"Refrigerante 2L Coca-Cola",  minimo:2 },
-{ nome:"Refrigerante 2L Guaraná",  minimo:2 },
-{ nome:"Refrigerante 2L Brahma",  minimo:2 },
-
-
-
-{ nome:"Chá Frutas Vermelhas",  minimo:1 },
-{ nome:"Chá Frutas Silvestres",  minimo:1 },
-{ nome:"Chá Camomila",  minimo:1 },
-{ nome:"Chá Hortelã",  minimo:1 },
-{ nome:"Chá Preto",  minimo:1 },
-{ nome:"Chá Verde",  minimo:1 },
-{ nome:"Chá Branco",  minimo:1 },
-
-
-{ nome:"Suco Maguary Abacaxi 500ml",  minimo:4 },
-{ nome:"Leite de Coco Ducoco 200ml",  minimo:8 },
-{ nome:"Leite Condensado 395g",  minimo:4 },
-{ nome:"Canudo Mexedor",  minimo:3 },
-{ nome:"Canudo Flexível",  minimo:4 },
-{ nome:"Copo Descartável 500ml",  minimo:2 },
-{ nome:"Copo Descartável 200ml",  minimo:2 },
-{ nome:"Cápsula de Chantilly",  minimo:1 },
-{ nome:"Cereja",  minimo:1 },
-{ nome:"Emulsificante 200g",  minimo:1 },
-{ nome:"Palito para Café",  minimo:1 },
-{ nome:"Coco Queimado",  minimo:1 },
-{ nome:"Açúcar 1kg",  minimo:10 },
-{ nome:"Suco de Uva 3L",  minimo:4 },
-{ nome:"Esponja para Copos",  minimo:3 },
-{ nome:"Pêssego em Calda 850g",  minimo:1 },
-
-
-
+  { nome:"Água com Gás 500ml", minimo:12, pack:12 },
+  { nome:"Água sem Gás 500ml", minimo:12, pack:12 },
+  { nome:"Coca-Cola 350ml", minimo:12, pack:12 },
+  { nome:"Coca-Cola Zero 350ml", minimo:6, pack:6 },
+  { nome:"Guaraná 350ml", minimo:6, pack:12 },
+  { nome:"Guaraná Zero 350ml", minimo:6, pack:6 },
+  { nome:"H2O Limão 500ml", minimo:12, pack:12 },
+  { nome:"H2O Limoneto 500ml", minimo:12, pack:12 },
+  { nome:"Red Bull Tradicional 250ml", minimo:6, pack:4 },
+  { nome:"Red Bull Tropical 250ml", minimo:4, pack:4 },
+  { nome:"Red Bull Zero 250ml", minimo:4, pack:4 },
+  { nome:"Schweppes Citrus 350ml", minimo:6, pack:6 },
+  { nome:"Sprite 350ml", minimo:6, pack:6 },
+  { nome:"Fanta Laranja 350ml", minimo:6, pack:6 },
+  { nome:"Tônica Schweppes 350ml", minimo:6, pack:6 },
+  { nome:"Tônica Zero Schweppes 350ml", minimo:6, pack:6 },
+  { nome:"Água Perrier 350ml", minimo:1, pack:6 },
+  { nome:"Acqua Panna", minimo:1, pack:6 },
+  { nome:"San Pellegrino", minimo:1, pack:6 },
+  { nome:"Cerveja Long Neck", minimo:1, pack:6 },
+  { nome:"Heineken Zero 355ml", minimo:24, pack:6 },
+  { nome:"Stella Artois Gold 355ml", minimo:24, pack:6 },
+  { nome:"Stella Artois 355ml", minimo:24, pack:6 },
+  { nome:"Café Leggero ou Finezzo", minimo:3, pack:10 },
+  { nome:"Café Descafeinado", minimo:1, pack:10 },
+  { nome:"Café Ristretto", minimo:3, pack:10 },
+  { nome:"Refrigerante 2L Coca-Cola", minimo:2, pack:6 },
+  { nome:"Refrigerante 2L Guaraná", minimo:2, pack:6 },
+  { nome:"Refrigerante 2L Brahma", minimo:2, pack:6 },
+  { nome:"Chá Frutas Vermelhas", minimo:1, pack:10 },
+  { nome:"Chá Frutas Silvestres", minimo:1, pack:10 },
+  { nome:"Chá Camomila", minimo:1, pack:10 },
+  { nome:"Chá Hortelã", minimo:1, pack:10 },
+  { nome:"Chá Preto", minimo:1, pack:10 },
+  { nome:"Chá Verde", minimo:1, pack:10 },
+  { nome:"Chá Branco", minimo:1, pack:10 },
+  { nome:"Suco Maguary Abacaxi 500ml", minimo:4, pack:10 },
+  { nome:"Leite de Coco Ducoco 200ml", minimo:8, pack:10 },
+  { nome:"Leite Condensado 395g", minimo:4, pack:10 },
+  { nome:"Canudo Mexedor", minimo:3, pack:10 },
+  { nome:"Canudo Flexível", minimo:4, pack:10 },
+  { nome:"Copo Descartável 500ml", minimo:2, pack:10 },
+  { nome:"Copo Descartável 200ml", minimo:2, pack:10 },
+  { nome:"Cápsula de Chantilly", minimo:1, pack:10 },
+  { nome:"Cereja", minimo:1, pack:10 },
+  { nome:"Emulsificante 200g", minimo:1, pack:10 },
+  { nome:"Palito para Café", minimo:1, pack:10 },
+  { nome:"Coco Queimado", minimo:1, pack:10 },
+  { nome:"Açúcar 1kg", minimo:10, pack:10 },
+  { nome:"Suco de Uva 3L", minimo:4, pack:6 },
+  { nome:"Esponja para Copos", minimo:3, pack:3 },
+  { nome:"Pêssego em Calda 850g", minimo:1, pack:10 }
 ];
 
 const estado = {};
-
 const tbody = document.querySelector("tbody");
 
 function render(){
   tbody.innerHTML = "";
 
-  itens.forEach(item=>{
-    estado[item.nome] ??= { estoque:0, bar:0 };
+  itens.forEach(item => {
+    estado[item.nome] ??= { estoque: 0, bar: 0 };
 
     const total = estado[item.nome].estoque + estado[item.nome].bar;
     const pedido = Math.max(item.minimo - total, 0);
@@ -219,20 +199,36 @@ function render(){
     tr.innerHTML = `
       <td class="nome">${item.nome}</td>
       <td>${item.minimo}</td>
-
+      
       <td>
         <div class="acoes">
-          <button onclick="alt('${item.nome}','estoque',-1)">-</button>
-          ${estado[item.nome].estoque}
-          <button onclick="alt('${item.nome}','estoque',1)">+</button>
+          <button onclick="alt('${item.nome}','estoque',-1)">-1</button>
+          <button onclick="alt('${item.nome}','estoque',-${item.pack})">📦</button>
+          <input 
+            type="number" 
+            min="0" 
+            value="${estado[item.nome].estoque}" 
+            onchange="setValor('${item.nome}','estoque',this.value)" 
+            style="width:50px; text-align:center;"
+          >
+          <button onclick="alt('${item.nome}','estoque',${item.pack})">📦</button>
+          <button onclick="alt('${item.nome}','estoque',1)">+1</button>
         </div>
       </td>
 
       <td>
         <div class="acoes">
-          <button onclick="alt('${item.nome}','bar',-1)">-</button>
-          ${estado[item.nome].bar}
-          <button onclick="alt('${item.nome}','bar',1)">+</button>
+          <button onclick="alt('${item.nome}','bar',-1)">-1</button>
+          <button onclick="alt('${item.nome}','bar',-${item.pack})">📦</button>
+          <input 
+            type="number" 
+            min="0" 
+            value="${estado[item.nome].bar}" 
+            onchange="setValor('${item.nome}','bar',this.value)" 
+            style="width:50px; text-align:center;"
+          >
+          <button onclick="alt('${item.nome}','bar',${item.pack})">📦</button>
+          <button onclick="alt('${item.nome}','bar',1)">+1</button>
         </div>
       </td>
 
@@ -242,33 +238,40 @@ function render(){
   });
 }
 
-window.alt = (nome, tipo, valor)=>{
+window.alt = (nome, tipo, valor) => {
   estado[nome][tipo] = Math.max(0, estado[nome][tipo] + valor);
   render();
 };
 
-render();
-
-/* 💾 SALVAR */
-document.getElementById("salvar").onclick = async () => {
-  const agora = new Date();
-
-  // ID único (data + hora)
-  const id = Date.now().toString();
-
- await setDoc(
-    doc(collection(db, "contagens"), id),
-    {
-       data: agora,
-    tipo: tipoContagem,
-    itens: estado
-    }
-  );
-
-  alert("Contagem salva 🔥");
+window.setValor = (nome, tipo, valor) => {
+  const v = parseInt(valor);
+  estado[nome][tipo] = isNaN(v) || v < 0 ? 0 : v;
+  render();
 };
 
+/* 📊 EXPORTAR CSV */
+document.getElementById("exportar").onclick = () => {
+  let csv = "Item;Minimo;Estoque;Bar;Pedido\n";
 
+  itens.forEach(item => {
+    const total = estado[item.nome].estoque + estado[item.nome].bar;
+    const pedido = Math.max(item.minimo - total, 0);
+    csv += `${item.nome};${item.minimo};${estado[item.nome].estoque};${estado[item.nome].bar};${pedido}\n`;
+  });
+
+  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const data = new Date().toLocaleDateString().replace(/\//g, '-');
+  
+  link.setAttribute("href", url);
+  link.setAttribute("download", `contagem_softs_${data}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+render();
 </script>
 
 </body>
