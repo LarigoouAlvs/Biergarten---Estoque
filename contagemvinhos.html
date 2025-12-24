@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Biergarten | Contagem</title>
+<title>Biergarten | Contagem Vinhos</title>
 
 <style>
 :root{
@@ -72,6 +72,24 @@ button{
   display:flex;
   gap:4px;
   justify-content:center;
+  align-items:center;
+}
+
+input[type=number] {
+  background: #333;
+  color: #fff;
+  border: 1px solid var(--borda);
+  padding: 4px;
+  border-radius: 4px;
+  width: 50px;
+  text-align: center;
+}
+
+/* Remove setas do input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 footer{
@@ -107,110 +125,74 @@ footer button{
 </table>
 
 <footer>
-  <button id="salvar">💾 Salvar Contagem</button>
+  <button id="exportar">📄 Exportar Contagem</button>
 </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB4fG9rCJq2nUAWgu_wpCxCy8zLUvziBIA",
-  authDomain: "biergarten-f5756.firebaseapp.com",
-  projectId: "biergarten-f5756",
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const tipoContagem = "vinhos";
-
-
-/* 🔢 ITENS (EXEMPLO) */
+<script>
+/* 🔢 ITENS */
 const itens = [
-
-// ESPUMANTES E VINHOS
-{ nome:"Salton Series Brut", minimo:6 },
-{ nome:"Dom Moscatel", minimo:4 },
-{ nome:"Dom Brut", minimo:3 },
-{ nome:"Nero Celebration Brut", minimo:3 },
-{ nome:"Casa Valduga Rosé", minimo:2 },
-{ nome:"Cave Amadeu Brut", minimo:6 },
-{ nome:"Cave Geisse Brut", minimo:6 },
-{ nome:"Ferrari Maximum Brut", minimo:2 },
-{ nome:"Veuve Ambal Brut", minimo:4 },
-
-// Champagnes
-{ nome:"Moët & Chandon Brut", minimo:3 },
-{ nome:"Veuve Clicquot", minimo:3 },
-
-{ nome:"Casa Valduga Gran Chardonnay",  minimo:4 },
-{ nome:"Minhadega Vinho Verde",  minimo:3 },
-{ nome:"Casalinho Alvarinho",  minimo:3 },
-{ nome:"Monte Estrela",  minimo:2 },
-{ nome:"Casa Valduga Terroir",  minimo:6 },
-{ nome:"Brisa Sauvignon Blanc",  minimo:6 },
-{ nome:"Anubis Susana Balbo Chardonnay",  minimo:3 },
-{ nome:"Cartuxa Évora Branco",  minimo:4 },
-{ nome:"Lidio Carrara Faces Chardonnay",  minimo:2 },
-{ nome:"Regia Colheita Reserva Branco",  minimo:2 },
-
-
-{ nome:"Miraval Cotes de Provence",  minimo:3 },
-{ nome:"Três Maria Vinho Verde Rosé",  minimo:3 },
-{ nome:"Luiz Argenta Jovem Rosé",  minimo:2 },
-
-
-{ nome:"Casa Valduga Pinot Noir",  minimo:3 },
-{ nome:"Manz Platonico",  minimo:2 },
-{ nome:"Punti Ferrer Carmenere",  minimo:3 },
-{ nome:"Punti Ferrer Cabernet Sauvignon",  minimo:0 },
-{ nome:"Camporsino Chianti",  minimo:3 },
-{ nome:"La Linda Malbec",  minimo:3 },
-{ nome:"Mói Primitivo Puglia",  minimo:3 },
-{ nome:"Naturelle Tinto",  minimo:3 },
-{ nome:"Muros de Vinhas",  minimo:2 },
-{ nome:"Origen Cabernet Sauvignon",  minimo:2 },
-{ nome:"Origen Merlot",  minimo:2 },
-{ nome:"Piatelli Reserva Malbec",  minimo:3 },
-{ nome:"Montes Alpha Carménère",  minimo:2 },
-{ nome:"Caladessa Syrah Reserva",  minimo:2 },
-
-
-{ nome:"Luigi Bosca Malbec",  minimo:2 },
-{ nome:"Brunello Caprili",  minimo:2 },
-{ nome:"Cartuxa Évora Tinto",  minimo:2 },
-{ nome:"Barolo Del Comune di Serralunga D'Alba",  minimo:2 },
-{ nome:"Dom Melchor",  minimo:1 },
-{ nome:"Casa Silva Pinot Noir",  minimo:3 },
-{ nome:"Dos Fincas",  minimo:3 },
-{ nome:"Pizzato Merlot",  minimo:2 },
-{ nome:"Chateau La Tour Carnet Haut-Médoc",  minimo:2 },
-{ nome:"Chateau Castegens",  minimo:2 },
-
-
-{ nome:"Vinho do Porto / Porto Cais", dosesPorGarrafa:15, minimo:1 },
-
-
-{ nome:"Vinho Tinto Entre Portas",  minimo:2 },
-{ nome:"Vinho Branco Entre Portas",  minimo:1 },
-
-
+  { nome:"Salton Series Brut", minimo:6 },
+  { nome:"Dom Moscatel", minimo:4 },
+  { nome:"Dom Brut", minimo:3 },
+  { nome:"Nero Celebration Brut", minimo:3 },
+  { nome:"Casa Valduga Rosé", minimo:2 },
+  { nome:"Cave Amadeu Brut", minimo:6 },
+  { nome:"Cave Geisse Brut", minimo:6 },
+  { nome:"Ferrari Maximum Brut", minimo:2 },
+  { nome:"Veuve Ambal Brut", minimo:4 },
+  { nome:"Moët & Chandon Brut", minimo:3 },
+  { nome:"Veuve Clicquot", minimo:3 },
+  { nome:"Casa Valduga Gran Chardonnay", minimo:4 },
+  { nome:"Minhadega Vinho Verde", minimo:3 },
+  { nome:"Casalinho Alvarinho", minimo:3 },
+  { nome:"Monte Estrela", minimo:2 },
+  { nome:"Casa Valduga Terroir", minimo:6 },
+  { nome:"Brisa Sauvignon Blanc", minimo:6 },
+  { nome:"Anubis Susana Balbo Chardonnay", minimo:3 },
+  { nome:"Cartuxa Évora Branco", minimo:4 },
+  { nome:"Lidio Carrara Faces Chardonnay", minimo:2 },
+  { nome:"Regia Colheita Reserva Branco", minimo:2 },
+  { nome:"Miraval Cotes de Provence", minimo:3 },
+  { nome:"Três Maria Vinho Verde Rosé", minimo:3 },
+  { nome:"Luiz Argenta Jovem Rosé", minimo:2 },
+  { nome:"Casa Valduga Pinot Noir", minimo:3 },
+  { nome:"Manz Platonico", minimo:2 },
+  { nome:"Punti Ferrer Carmenere", minimo:3 },
+  { nome:"Punti Ferrer Cabernet Sauvignon", minimo:0 },
+  { nome:"Camporsino Chianti", minimo:3 },
+  { nome:"La Linda Malbec", minimo:3 },
+  { nome:"Mói Primitivo Puglia", minimo:3 },
+  { nome:"Naturelle Tinto", minimo:3 },
+  { nome:"Muros de Vinhas", minimo:2 },
+  { nome:"Origen Cabernet Sauvignon", minimo:2 },
+  { nome:"Origen Merlot", minimo:2 },
+  { nome:"Piatelli Reserva Malbec", minimo:3 },
+  { nome:"Montes Alpha Carménère", minimo:2 },
+  { nome:"Caladessa Syrah Reserva", minimo:2 },
+  { nome:"Luigi Bosca Malbec", minimo:2 },
+  { nome:"Brunello Caprili", minimo:2 },
+  { nome:"Cartuxa Évora Tinto", minimo:2 },
+  { nome:"Barolo Del Comune di Serralunga D'Alba", minimo:2 },
+  { nome:"Dom Melchor", minimo:1 },
+  { nome:"Casa Silva Pinot Noir", minimo:3 },
+  { nome:"Dos Fincas", minimo:3 },
+  { nome:"Pizzato Merlot", minimo:2 },
+  { nome:"Chateau La Tour Carnet Haut-Médoc", minimo:2 },
+  { nome:"Chateau Castegens", minimo:2 },
+  { nome:"Vinho do Porto / Porto Cais", minimo:1 },
+  { nome:"Vinho Tinto Entre Portas", minimo:2 },
+  { nome:"Vinho Branco Entre Portas", minimo:1 }
 ];
 
 const estado = {};
-
+const caixaPadrao = 6; // Padrão para vinhos
 const tbody = document.querySelector("tbody");
 
 function render(){
   tbody.innerHTML = "";
 
-  itens.forEach(item=>{
-    estado[item.nome] ??= { estoque:0, bar:0 };
+  itens.forEach(item => {
+    estado[item.nome] ??= { estoque: 0, bar: 0 };
 
     const total = estado[item.nome].estoque + estado[item.nome].bar;
     const pedido = Math.max(item.minimo - total, 0);
@@ -219,56 +201,62 @@ function render(){
     tr.innerHTML = `
       <td class="nome">${item.nome}</td>
       <td>${item.minimo}</td>
-
       <td>
         <div class="acoes">
-          <button onclick="alt('${item.nome}','estoque',-1)">-</button>
-          ${estado[item.nome].estoque}
-          <button onclick="alt('${item.nome}','estoque',1)">+</button>
+          <button onclick="alt('${item.nome}','estoque',-1)">-1</button>
+          <button onclick="alt('${item.nome}','estoque',-${caixaPadrao})">📦</button>
+          <input type="number" min="0" value="${estado[item.nome].estoque}" onchange="setValor('${item.nome}','estoque',this.value)">
+          <button onclick="alt('${item.nome}','estoque',${caixaPadrao})">📦</button>
+          <button onclick="alt('${item.nome}','estoque',1)">+1</button>
         </div>
       </td>
-
       <td>
         <div class="acoes">
-          <button onclick="alt('${item.nome}','bar',-1)">-</button>
-          ${estado[item.nome].bar}
-          <button onclick="alt('${item.nome}','bar',1)">+</button>
+          <button onclick="alt('${item.nome}','bar',-1)">-1</button>
+          <button onclick="alt('${item.nome}','bar',-${caixaPadrao})">📦</button>
+          <input type="number" min="0" value="${estado[item.nome].bar}" onchange="setValor('${item.nome}','bar',this.value)">
+          <button onclick="alt('${item.nome}','bar',${caixaPadrao})">📦</button>
+          <button onclick="alt('${item.nome}','bar',1)">+1</button>
         </div>
       </td>
-
       <td>${pedido}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-window.alt = (nome, tipo, valor)=>{
+window.alt = (nome, tipo, valor) => {
   estado[nome][tipo] = Math.max(0, estado[nome][tipo] + valor);
   render();
 };
 
-render();
-
-/* 💾 SALVAR */
-document.getElementById("salvar").onclick = async () => {
-  const agora = new Date();
-
-  // ID único (data + hora)
-  const id = Date.now().toString();
-
-  await setDoc(
-    doc(collection(db, "contagens"), id),
-    {
-       data: agora,
-    tipo: tipoContagem,
-    itens: estado
-    }
-  );
-
-  alert("Contagem salva 🔥");
+window.setValor = (nome, tipo, valor) => {
+  const v = parseInt(valor);
+  estado[nome][tipo] = isNaN(v) || v < 0 ? 0 : v;
+  render();
 };
 
+/* 📊 EXPORTAR */
+document.getElementById("exportar").onclick = () => {
+  let csv = "Item;Minimo;Estoque;Bar;Pedido\n";
 
+  itens.forEach(item => {
+    const total = estado[item.nome].estoque + estado[item.nome].bar;
+    const pedido = Math.max(item.minimo - total, 0);
+    csv += `${item.nome};${item.minimo};${estado[item.nome].estoque};${estado[item.nome].bar};${pedido}\n`;
+  });
+
+  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const data = new Date().toLocaleDateString().replace(/\//g, '-');
+  
+  link.setAttribute("href", url);
+  link.setAttribute("download", `contagem_vinhos_${data}.csv`);
+  link.click();
+};
+
+render();
 </script>
 
 </body>
