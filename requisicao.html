@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biergarten | Requisição de Bar</title>
+<style>
+    :root {
+        --amarelo: #F4C430;
+        --preto: #1a1a1a;
+        --preto80: #262626;
+        --borda: #444;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        background: var(--preto);
+        color: #fff;
+        margin: 0;
+        padding: 20px;
+    }
+    /* CABEÇALHO SOLICITADO */
+    .topo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .topo h1 { margin: 0; color: var(--amarelo); font-size: 24px; }
+    .topo a {
+        background: var(--amarelo);
+        color: #000;
+        padding: 10px 15px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    .topo a.voltar { background: #555; color: #fff; }
+
+    input[type="text"], select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid var(--borda);
+        background: #333;
+        color: white;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background: var(--preto80);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    th, td {
+        padding: 12px 8px;
+        text-align: center;
+        border-bottom: 1px solid var(--borda);
+    }
+    th { background: var(--amarelo); color: #000; font-size: 14px; }
+    td.nome { text-align: left; font-weight: bold; font-size: 14px; }
+
+    .botoes {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    button.btn-qtd {
+        background: var(--amarelo);
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    #resumo {
+        background: var(--preto80);
+        padding: 16px;
+        margin-top: 20px;
+        border-radius: 10px;
+        border-top: 4px solid var(--amarelo);
+    }
+    .btn-finalizar {
+        background: var(--amarelo);
+        color: #000;
+        font-weight: bold;
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 6px;
+        margin-top: 15px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<div class="topo">
+    <h1>📝 Requisição</h1>
+    <div>
+        <a href="hortifruti.html">🥬 Hortifrúti</a>
+        <a href="index.html" class="voltar">⬅ Voltar</a>
+    </div>
+</div>
+
+<input type="text" id="busca" placeholder="🔍 Buscar produto na lista oficial...">
+
+<table>
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Mínimo (EM)</th>
+            <th>Pedir</th>
+        </tr>
+    </thead>
+    <tbody id="lista-produtos"></tbody>
+</table>
+
+<div id="resumo" style="display:none;">
+    <h3>Resumo da Requisição</h3>
+    <div id="itens-pedido"></div>
+    <select id="colaborador" style="margin-top:15px;">
+        <option value="">Selecione o Colaborador</option>
+        <option>Daniel</option>
+        <option>Larissa</option>
+        <option>Samuel</option>
+        <option>Alisson</option>
+    </select>
+    <button id="btnFinalizar" class="btn-finalizar">💾 Finalizar Requisição</button>
+</div>
+
+<script>
+// Lista corrigida com os valores do PDF 
+const produtos = [
+    { nome: "Stella Artois (Sem Gluten)", min: 12 },
+    { nome: "Stella Artois (Com Glúten)", min: 12 },
+    { nome: "Heineken Zero", min: 12 },
+    { nome: "Martini Bianco", min: 1 },
+    { nome: "Martini Dry", min: 1 },
+    { nome: "Martini Rosso", min: 2 },
+    { nome: "Carpano", min: 3 },
+    { nome: "Domecq", min: 1 },
+    { nome: "Chá de Frutas Vermelhas", min: 1 },
+    { nome: "Chá de Frutas Silvestres", min: 1 },
+    { nome: "Chá Hortelã", min: 1 },
+    { nome: "Chá Preto", min: 1 },
+    { nome: "Chá Verde", min: 1 },
+    { nome: "Chá Camomila", min: 1 },
+    { nome: "Chá Branco", min: 1 },
+    { nome: "Red Bull Light", min: 12 },
+    { nome: "Red Bull", min: 12 },
+    { nome: "Red Bull Tropical", min: 12 },
+    { nome: "Double W", min: 3 },
+    { nome: "Schilecthe Alemão", min: 2 },
+    { nome: "Jose Cuervo Gold", min: 2 },
+    { nome: "Jose Cuervo Silver", min: 2 },
+    { nome: "Bacardi Carta Blanca", min: 4 },
+    { nome: "Bacardi Carta Oro", min: 2 },
+    { nome: "Malibu", min: 2 },
+    { nome: "Absolut", min: 4 },
+    { nome: "Absolut Citron", min: 1 },
+    { nome: "Smirnoff", min: 4 },
+    { nome: "Grey Goose", min: 2 },
+    { nome: "Belvedere", min: 2 },
+    { nome: "Ketel One", min: 2 },
+    { nome: "Stolichnaya", min: 2 },
+    { nome: "Cachaça Ypióca Ouro", min: 2 },
+    { nome: "Cachaça Ypióca Prata", min: 2 },
+    { nome: "Sagatiba Aguardente Pura", min: 4 },
+    { nome: "Velho Barreiro", min: 2 },
+    { nome: "Refazendo Prata", min: 1 },
+    { nome: "Refazendo Ouro", min: 1 },
+    { nome: "Refazendo Amburana", min: 1 },
+    { nome: "Refazendo Jambu", min: 1 },
+    { nome: "Chivas 12", min: 4 },
+    { nome: "Chivas 18", min: 3 },
+    { nome: "Black Label", min: 2 },
+    { nome: "Red Label", min: 4 },
+    { nome: "Blue Label", min: 1 },
+    { nome: "The Macallan 12", min: 1 },
+    { nome: "The Macallan 15", min: 1 },
+    { nome: "Royal Salute", min: 1 },
+    { nome: "Glenfiddich", min: 1 },
+    { nome: "Ballantine’s", min: 1 },
+    { nome: "Jack Daniels Tennessee", min: 3 },
+    { nome: "Jack Daniels Honey", min: 2 },
+    { nome: "Wild Turkey", min: 1 },
+    { nome: "Jim Beam", min: 2 },
+    { nome: "Hibiki Harmony", min: 1 },
+    { nome: "Yamazaki", min: 1 },
+    { nome: "Jameson", min: 2 },
+    { nome: "Campari", min: 7 },
+    { nome: "Underberg", min: 1 },
+    { nome: "Angostura Aromatic", min: 1 },
+    { nome: "Angostura Orange", min: 1 },
+    { nome: "Aperol", min: 3 },
+    { nome: "Lillet Blanc", min: 3 },
+    { nome: "Cynar", min: 1 },
+    { nome: "The Dalmore", min: 1 },
+    { nome: "Tanqueray", min: 4 },
+    { nome: "Beefeater", min: 4 },
+    { nome: "Hendricks", min: 2 },
+    { nome: "The Botanist", min: 2 },
+    { nome: "Amazzoni", min: 1 },
+    { nome: "Jägermeister", min: 4 },
+    { nome: "Licor 43", min: 4 },
+    { nome: "Amaretto Dell Orso", min: 1 },
+    { nome: "Amarula", min: 3 },
+    { nome: "Baileys", min: 3 },
+    { nome: "St Germain", min: 2 },
+    { nome: "Cointreau", min: 3 },
+    { nome: "Triple Sec Stock", min: 1 },
+    { nome: "Creme de Cassis Stock", min: 1 },
+    { nome: "Licor Café Cristal", min: 1 },
+    { nome: "Salton Series Brut", min: 4 },
+    { nome: "Cave Geisse Brut", min: 1 },
+    { nome: "Ferrari Maximum Brut", min: 1 },
+    { nome: "De Marseille Moscatel", min: 3 },
+    { nome: "De Marseille Brut", min: 3 },
+    { nome: "Nero Celebration Brut", min: 3 },
+    { nome: "Chateau Castegens Merlot", min: 1 },
+    { nome: "Montes Alpha Carmenere", min: 3 },
+    { nome: "Chateau Lá Tour Carnet", min: 1 },
+    { nome: "Origen Merlot", min: 4 },
+    { nome: "Punti Ferrer Carmenere", min: 4 },
+    { nome: "Punti Ferrer Cabernet Sauvignon", min: 4 },
+    { nome: "La Linda Malbec", min: 6 },
+    { nome: "Caladessa Syrah Reserva", min: 2 },
+    { nome: "Luigi Bosca Malbec", min: 2 },
+    { nome: "Naturelle Tinto", min: 4 },
+    { nome: "Luiz Argenta Clássico Merlot", min: 4 },
+    { nome: "Principe Corsini Chianti", min: 4 },
+    { nome: "Pizzato Reserva Merlot", min: 2 },
+    { nome: "Casa Silva Pinot Noir", min: 3 },
+    { nome: "Don Melchor D.O.C", min: 1 },
+    { nome: "Cartuxa Colheita", min: 2 },
+    { nome: "Brunello Caprili", min: 1 },
+    { nome: "Barolo Riveto Serralunga", min: 2 },
+    { nome: "Manz Platônico", min: 3 },
+    { nome: "Minha Adega Vinho Verde", min: 3 },
+    { nome: "Monte Estrela", min: 3 },
+    { nome: "Casa Valduga Terroir", min: 2 },
+    { nome: "Brisa Sauvignon Branco", min: 2 },
+    { nome: "Casa Valduga Gran Chardonnay", min: 1 },
+    { nome: "Muros de Vinhas Branco", min: 3 },
+    { nome: "Regia Colheita Reserva", min: 2 },
+    { nome: "Tenuta Sant’Anna Pinot Grigio Brut", min: 2 },
+    { nome: "Tres Maria", min: 3 },
+    { nome: "Casa Valduga Premium Rosé", min: 2 },
+    { nome: "Miraval Côtes de Provence", min: 1 },
+    { nome: "Veuve Ambal Cuvée", min: 1 },
+    { nome: "Möet & Chandon Imperial Brut", min: 1 },
+    { nome: "Veuve Clicquot", min: 1 },
+    { nome: "Água Perrier", min: 3 },
+    { nome: "Acqua Panna", min: 1 },
+    { nome: "S. Pellegrino", min: 1 },
+    { nome: "Detergente", min: 3 },
+    { nome: "Detergente Máquina", min: 1 },
+    { nome: "Secante Máquina", min: 1 },
+    { nome: "Limpol", min: 1 },
+    { nome: "Esponja Copos", min: 2 },
+    { nome: "Esponja Amarela", min: 1 },
+    { nome: "Papel Toalha", min: 2 },
+    { nome: "Rolo de Papel Toalha", min: 1 },
+    { nome: "Água Sanitária", min: 1 },
+    { nome: "Álcool", min: 2 },
+    { nome: "Cloro em Pó", min: 1 },
+    { nome: "Saco de Lixo", min: 10 },
+    { nome: "Saco de Lixo Verde", min: 5 },
+    { nome: "Saco para Gelo", min: 5 },
+    { nome: "Perflex", min: 1 },
+    { nome: "Açúcar", min: 3 },
+    { nome: "Leite Condensado", min: 2 },
+    { nome: "Leite de Coco", min: 2 },
+    { nome: "Suco Maguary Abacaxi", min: 2 },
+    { nome: "Coco Ralado Queimado", min: 1 },
+    { nome: "Cereja", min: 1 },
+    { nome: "Pêssego em Calda", min: 1 },
+    { nome: "Pimenta Rosa", min: 1 },
+    { nome: "Anis Estrelado", min: 1 },
+    { nome: "Palito para Café", min: 1 },
+    { nome: "Canudo Flex", min: 1 },
+    { nome: "Canudo Mexedor", min: 4 },
+    { nome: "Copo 300ml", min: 1 },
+    { nome: "Copo 500ml", min: 1 },
+    { nome: "Guardanapo", min: 4 },
+    { nome: "Cápsula Sifão", min: 4 },
+    { nome: "Leggero ou Finezzo", min: 50 },
+    { nome: "Descafeinado", min: 5 },
+    { nome: "Ristretto", min: 50 }
+];
+
+let pedido = {};
+
+function render(filtro = "") {
+    const tbody = document.getElementById("lista-produtos");
+    tbody.innerHTML = "";
+    produtos.filter(p => p.nome.toLowerCase().includes(filtro.toLowerCase())).forEach(p => {
+        const qtd = pedido[p.nome] || 0;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td class="nome">${p.nome}</td>
+            <td>${p.min}</td>
+            <td>
+                <div class="botoes">
+                    <button class="btn-qtd" onclick="alterar('${p.nome}', -1)">-</button>
+                    <strong>${qtd}</strong>
+                    <button class="btn-qtd" onclick="alterar('${p.nome}', 1)">+</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+window.alterar = (nome, valor) => {
+    pedido[nome] = (pedido[nome] || 0) + valor;
+    if (pedido[nome] <= 0) delete pedido[nome];
+    atualizarResumo();
+    render(document.getElementById("busca").value);
+};
+
+function atualizarResumo() {
+    const container = document.getElementById("itens-pedido");
+    const resumoDiv = document.getElementById("resumo");
+    container.innerHTML = "";
+    const chaves = Object.keys(pedido);
+    if (chaves.length > 0) {
+        resumoDiv.style.display = "block";
+        chaves.forEach(nome => {
+            container.innerHTML += `<div style="display:flex; justify-content:space-between; padding:4px 0;"><span>${nome}</span> <b>${pedido[nome]}x</b></div>`;
+        });
+    } else {
+        resumoDiv.style.display = "none";
+    }
+}
+
+document.getElementById("busca").oninput = (e) => render(e.target.value);
+
+document.getElementById("btnFinalizar").onclick = () => {
+    const colab = document.getElementById("colaborador").value;
+    if (!colab) return alert("Selecione o colaborador!");
+    const data = new Date().toLocaleDateString();
+    let csv = `Requisicao Bar;Colaborador: ${colab};Data: ${data}\nItem;Minimo;Pedido\n`;
+    for (let nome in pedido) {
+        const itemOriginal = produtos.find(p => p.nome === nome);
+        csv += `${nome};${itemOriginal.min};${pedido[nome]}\n`;
+    }
+    const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `requisicao_${colab}_${data.replace(/\//g, '-')}.csv`;
+    link.click();
+    alert("Requisição gerada com sucesso!");
+    pedido = {};
+    document.getElementById("colaborador").value = "";
+    atualizarResumo();
+    render();
+};
+
+render();
+</script>
+</body>
+</html>
