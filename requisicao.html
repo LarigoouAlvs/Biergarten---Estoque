@@ -371,16 +371,6 @@ document.getElementById("btnFinalizar").onclick = () => {
     link.click();
     document.body.removeChild(link);
 
-    // 📲 Abrir WhatsApp no número fixo
-    const mensagem = encodeURIComponent(
-        `📦 Requisição de Bar\n👤 Colaborador: ${colab}\n📅 Data: ${data}\n📎 Arquivo: ${nomeArquivo}`
-    );
-
-    window.open(
-        `https://wa.me/${telefoneWhats}?text=${mensagem}`,
-        "_blank"
-    );
-
     // 🔄 Resetar tela
     alert("Requisição gerada com sucesso!");
     pedido = {};
@@ -389,7 +379,9 @@ document.getElementById("btnFinalizar").onclick = () => {
     render();
 };
 
+
 render();
 </script>
 </body>
 </html>
+
