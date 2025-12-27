@@ -314,9 +314,6 @@ window.setValor = (nome, tipo, valor) => {
 };
 
 /* 📊 EXPORTAR CSV */
-const telefoneWhats = "554796086328"; // +55 47 9608-6328
-
-/* 📊 EXPORTAR CSV + ABRIR WHATSAPP */
 document.getElementById("exportar").onclick = () => {
   let csv = "Item;Minimo;Estoque;Bar;Pedido\n";
 
@@ -339,24 +336,12 @@ document.getElementById("exportar").onclick = () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-
-  // 📲 Abrir WhatsApp no número específico
-  const mensagem = encodeURIComponent(
-    `Segue a contagem de SOFTS (${data}).\nArquivo: ${nomeArquivo}`
-  );
-
-  window.open(
-    `https://wa.me/${telefoneWhats}?text=${mensagem}`,
-    "_blank"
-  );
 };
 
-function toggleMenu(){
-  document.getElementById("menu").classList.toggle("active");
-}
 
 render();
 </script>
 
 </body>
 </html>
+
