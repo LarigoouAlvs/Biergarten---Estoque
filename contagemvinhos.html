@@ -101,22 +101,79 @@ footer button{
   padding:12px;
   font-size:16px;
 }
+
+/* ===== MENU RESPONSIVO ===== */
+.topo{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.hamburguer{
+  display:none;
+  background:none;
+  border:none;
+  font-size:26px;
+  color:var(--amarelo);
+  cursor:pointer;
+}
+
+/* MENU NORMAL */
+#menu{
+  display:flex;
+  gap:8px;
+}
+
+/* MOBILE */
+@media (max-width: 768px){
+  .hamburguer{
+    display:block;
+  }
+
+  #menu{
+    position:absolute;
+    top:60px;
+    right:20px;
+    background:var(--preto80);
+    flex-direction:column;
+    padding:10px;
+    border-radius:8px;
+    gap:8px;
+    display:none;
+    box-shadow:0 0 10px rgba(0,0,0,.4);
+  }
+
+  #menu.active{
+    display:flex;
+  }
+
+  #menu a{
+    width:100%;
+    text-align:left;
+  }
+}
+
 </style>
 </head>
 
 <body>
 
-<header>
-    <h1>📦 Contagem de Vinhos & Espumantes</h1>
+<header class="topo">
+  <h1>📦 Contagem</h1>
 
-  <div class="acoes-topo" id="menu">
-    
+  <!-- BOTÃO HAMBURGUER -->
+  <button class="hamburguer" onclick="toggleMenu()">☰</button>
+
+  <!-- MENU -->
+  <nav id="menu">
     <a href="contagemsoft.html">🥤 Softs</a>
     <a href="contagemdestilados.html">🍸 Destilados</a>
     <a href="contagemvinhos.html">🍷 Vinhos</a>
     <a href="index.html">⬅ Voltar</a>
-  </div>
+  </nav>
 </header>
+
 
 <table id="tabela">
   <thead>
@@ -255,13 +312,33 @@ document.getElementById("exportar").onclick = () => {
 
   const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
+
+  // 🔽 Baixa o arquivo
   const link = document.createElement("a");
   const data = new Date().toLocaleDateString().replace(/\//g, '-');
-  
-  link.setAttribute("href", url);
-  link.setAttribute("download", `contagem_vinhos_${data}.csv`);
+  const nomeArquivo = `contagem_vinhos_${data}.csv`;
+
+  link.href = url;
+  link.download = nomeArquivo;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
+
+  // 🔗 Abre WhatsApp já no número certo
+  const mensagem = encodeURIComponent(
+    `Segue a contagem de vinhos (${data}).\nArquivo: ${nomeArquivo}`
+  );
+
+  window.open(
+    `https://wa.me/5547996086328?text=${mensagem}`,
+    "_blank"
+  );
 };
+
+function toggleMenu(){
+  document.getElementById("menu").classList.toggle("active");
+}
+
 
 render();
 </script>
