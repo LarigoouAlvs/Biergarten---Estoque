@@ -125,7 +125,11 @@ textarea {
 
 <header>
   <h1>📝 Mural</h1>
-  <a href="index.html">⬅ Voltar</a>
+
+  <nav id="menu">
+    <a href="procedimento.html">📝 Informativos</a>
+    <a href="index.html">⬅ Voltar</a>
+  </nav>
 </header>
 
 <div class="form-recado">
@@ -161,7 +165,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const colRef = collection(db, "recados");
 
-const SENHA_ADMIN = "1324"; 
+const SENHA_ADMIN = "1234"; 
 
 document.getElementById("btnEnviar").onclick = async () => {
     const texto = document.getElementById("textoRecado").value;
@@ -206,7 +210,7 @@ window.apagarRecado = async (id) => {
         alert("Senha incorreta!");
     }
 };
+
 </script>
 </body>
-
 </html>
