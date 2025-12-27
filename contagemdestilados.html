@@ -312,9 +312,7 @@ window.setValor = (nome, tipo, valor) => {
   render();
 };
 
-const telefoneWhats = "554796086328"; // +55 47 9608-6328
-
-// 📊 EXPORTAR CSV + WHATSAPP
+// 📊 EXPORTAR CSV
 document.getElementById("exportar").onclick = () => {
   let csv = "Item;Minimo (Doses);Estoque (Doses);Bar (Doses);Pedido (Doses);Sugestao Garrafas\n";
 
@@ -340,20 +338,8 @@ document.getElementById("exportar").onclick = () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-
-  // 📲 Adicionando um delay antes de abrir o WhatsApp
-  setTimeout(() => {
-    const telefoneWhats = "554796086328"; // +55 47 9608-6328
-    const mensagem = encodeURIComponent(
-      `Segue a contagem de DESTILADOS (${data}).\nArquivo: ${nomeArquivo}`
-    );
-
-    window.open(
-      `https://wa.me/${telefoneWhats}?text=${mensagem}`,
-      "_blank"
-    );
-  }, 2000); // 2000ms (2 segundos) de delay
 };
+
 
 
 function toggleMenu(){
@@ -365,3 +351,4 @@ render();
 
 </body>
 </html>
+
