@@ -1,3 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Biergarten | Contagem</title>
+
+<style>
+:root{
+  --amarelo:#F4C430;
+  --preto:#1a1a1a;
+  --preto80:#262626;
+  --borda:#444;
+}
+
+body{
+  background:var(--preto);
+  color:#fff;
+  font-family:Arial, sans-serif;
+  padding:20px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+header h1{ color:var(--amarelo); margin:0; }
+
+header a{
+  background:var(--amarelo);
+  color:#000;
+  padding:8px 12px;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+th, td{
+  border:1px solid var(--borda);
+  padding:6px;
+  text-align:center;
+}
+
+th{
+  background:var(--amarelo);
+  color:#000;
+}
+
+td.nome{
+  text-align:left;
+  font-weight:bold;
+}
+
+button{
+  background:var(--amarelo);
+  border:none;
+  padding:4px 8px;
+  border-radius:4px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.acoes{
+  display:flex;
+  gap:4px;
+  justify-content:center;
+}
+
+footer{
+  margin-top:20px;
+}
+
+footer button{
+  width:100%;
+  padding:12px;
+  font-size:16px;
+}
+
+/* ===== MENU RESPONSIVO ===== */
+.topo{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.hamburguer{
+  display:none;
+  background:none;
+  border:none;
+  font-size:26px;
+  color:var(--amarelo);
+  cursor:pointer;
+}
+
+/* MENU NORMAL */
+#menu{
+  display:flex;
+  gap:8px;
+}
+
+/* MOBILE */
+@media (max-width: 768px){
+  .hamburguer{
+    display:block;
+  }
+
+  #menu{
+    position:absolute;
+    top:60px;
+    right:20px;
+    background:var(--preto80);
+    flex-direction:column;
+    padding:10px;
+    border-radius:8px;
+    gap:8px;
+    display:none;
+    box-shadow:0 0 10px rgba(0,0,0,.4);
+  }
+
+  #menu.active{
+    display:flex;
+  }
+
+  #menu a{
+    width:100%;
+    text-align:left;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="topo">
+  <h1>📦 Contagem</h1>
+
+  <!-- BOTÃO HAMBURGUER -->
+  <button class="hamburguer" onclick="toggleMenu()">☰</button>
+
+  <!-- MENU -->
+  <nav id="menu">
+    <a href="contagemsoft.html">🥤 Softs</a>
+    <a href="contagemdestilados.html">🍸 Destilados</a>
+    <a href="contagemvinhos.html">🍷 Vinhos</a>
+    <a href="index.html">⬅ Voltar</a>
+  </nav>
+</header>
+
+
+<table id="tabela">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Mínimo</th>
+      <th>Estoque</th>
+      <th>Bar</th>
+      <th>Pedido</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<footer>
+  <button id="exportar">📄 Exportar Contagem</button>
+</footer>
+
+
+</footer>
+
+<script>
+/* 🔢 ITENS */
+const itens = [
+    { nome:"Bacardi Carta Blanca Rum", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Bacardi Carta Oro Rum", dosesPorGarrafa:19, minimoGarrafas:2 },
+    { nome:"Malibu Rum", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Cachaça Ypióca Ouro", dosesPorGarrafa:19, minimoGarrafas:2 },
+    { nome:"Cachaça Ypióca Prata", dosesPorGarrafa:19, minimoGarrafas:2 },
+    { nome:"Refazenda Prata", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Refazenda Ouro", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Refazenda Amburana", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Refazenda Jambu", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Sagatiba Aguardente Pura", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Velho Barreiro", dosesPorGarrafa:19, minimoGarrafas:4 },
+    { nome:"Conhaque Domecq", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Campari", dosesPorGarrafa:18, minimoGarrafas:3 },
+    { nome:"Underberg", dosesPorGarrafa:18, minimoGarrafas:2 },
+    { nome:"Angostura Aromatic", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Angostura Orange", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Aperol", dosesPorGarrafa:15, minimoGarrafas:4 },
+    { nome:"Lillet Blanc", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Cynar", dosesPorGarrafa:28, minimoGarrafas:1 },
+    { nome:"Gin Tanqueray", dosesPorGarrafa:15, minimoGarrafas:6 },
+    { nome:"Gin Verf London Dry", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Gin Amazzoni", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Gin Beefeater", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Gin Hendricks", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"Gin The Botanist", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Jägermeister", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Licor 43", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Amaretto Dell Orso", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Frangelico", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Amarula", dosesPorGarrafa:15, minimoGarrafas:3 },
+    { nome:"Baileys", dosesPorGarrafa:15, minimoGarrafas:1 },
+    { nome:"St Germain", dosesPorGarrafa:15, minimoGarrafas:3 },
+    { nome:"Cointreau", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Licor Stok Fino", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Licor Stok Creme Cassis", dosesPorGarrafa:14, minimoGarrafas:3 },
+    { nome:"Martini Bianco", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Martini Dry", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Martini Rosso", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Carpano Clássico", dosesPorGarrafa:20, minimoGarrafas:2 },
+    { nome:"Steinhager Double W", dosesPorGarrafa:18, minimoGarrafas:6 },
+    { nome:"Steinhager Schlichte Alemão", dosesPorGarrafa:14, minimoGarrafas:2 },
+    { nome:"Tequila José Cuervo Ouro", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Tequila José Cuervo Silver", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Vodka Absolut", dosesPorGarrafa:20, minimoGarrafas:3 },
+    { nome:"Vodka Smirnoff", dosesPorGarrafa:20, minimoGarrafas:12 },
+    { nome:"Grey Goose", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Belvedere", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Ketel One", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Stolichnaya", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Absolut Citron", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Jack Daniel’s", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Jack Daniel’s Honey", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome:"Wild Turkey", dosesPorGarrafa:20, minimoGarrafas:1 },
+    { nome: "Whiskey Chivas 12", "dosesPorGarrafa": 20, "minimoGarrafas": 1 },
+    { nome: "Whiskey Chivas 18", "dosesPorGarrafa": 15, "minimoGarrafas": 1 },
+    { nome: "Whiskey JW Black Label 12 anos", "dosesPorGarrafa": 20, "minimoGarrafas": 1 },
+    { nome: "Whiskey JW Blue Label 21 anos", "dosesPorGarrafa": 20, "minimoGarrafas": 1 },
+    { nome: "Whiskey JW Red Label 8 anos", "dosesPorGarrafa": 20, "minimoGarrafas": 1 },
+    { nome: "The Macallan 12 anos", "dosesPorGarrafa": 14, "minimoGarrafas": 1 },
+    { nome: "The Macallan 15 anos", "dosesPorGarrafa": 14, "minimoGarrafas": 1 },
+    { nome: "Royal Salute 21 anos", "dosesPorGarrafa": 14, "minimoGarrafas": 1 },
+    { nome: "Glenfiddich 15 anos", "dosesPorGarrafa": 14, "minimoGarrafas": 1 },
+    { nome: "Ballantine's 17 anos", "dosesPorGarrafa": 14, "minimoGarrafas": 1 },
+    { nome: "The Dalmore 12 anos", "dosesPorGarrafa": 14, "minimoGarrafas": 1 },
+    { nome: "Buchanan's 12 anos", "dosesPorGarrafa": 14, "minimoGarrafas": 1 },
+    { nome: "Whiskey Passport", "dosesPorGarrafa": 20, "minimoGarrafas": 1 },
+    { nome:"Hibiki Harmony", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Yamazaki 12 anos", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Jameson", dosesPorGarrafa:14, minimoGarrafas:1 },
+    { nome:"Xarope Monin Grenadine", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Cranberry", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Maçã Verde", dosesPorGarrafa:15, minimoGarrafas:3 },
+    { nome:"Xarope Monin Morango", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Maracujá", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Pêssego", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Rosas", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope Monin Tangerina", dosesPorGarrafa:15, minimoGarrafas:2 },
+    { nome:"Xarope 1883 Cranberry", dosesPorGarrafa:20, minimoGarrafas:1 }
+];
+
+const estado = {};
+const tbody = document.querySelector("tbody");
+
+function render(){
+  tbody.innerHTML = "";
+
+  itens.forEach(item => {
+    estado[item.nome] ??= { estoque: 0, bar: 0 };
+
+    const minimoDoses = item.minimoGarrafas * item.dosesPorGarrafa;
+    const totalDoses = estado[item.nome].estoque + estado[item.nome].bar;
+    const pedidoDoses = Math.max(minimoDoses - totalDoses, 0);
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="nome">${item.nome}</td>
+      <td>${minimoDoses} doses</td>
+      <td>
+        <div class="acoes">
+          <button onclick="alt('${item.nome}','estoque',-1)">-1</button>
+          <button onclick="alt('${item.nome}','estoque',-${item.dosesPorGarrafa})">-🍾</button>
+          <input type="number" min="0" value="${estado[item.nome].estoque}" onchange="setValor('${item.nome}','estoque',this.value)" style="width:55px;text-align:center;">
+          <button onclick="alt('${item.nome}','estoque',${item.dosesPorGarrafa})">+🍾</button>
+          <button onclick="alt('${item.nome}','estoque',1)">+1</button>
+        </div>
+      </td>
+      <td>
+        <div class="acoes">
+          <button onclick="alt('${item.nome}','bar',-1)">-1</button>
+          <button onclick="alt('${item.nome}','bar',-${item.dosesPorGarrafa})">-🍾</button>
+          <input type="number" min="0" value="${estado[item.nome].bar}" onchange="setValor('${item.nome}','bar',this.value)" style="width:55px;text-align:center;">
+          <button onclick="alt('${item.nome}','bar',${item.dosesPorGarrafa})">+🍾</button>
+          <button onclick="alt('${item.nome}','bar',1)">+1</button>
+        </div>
+      </td>
+      <td>${pedidoDoses} doses</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+window.alt = (nome, tipo, valor) => {
+  estado[nome][tipo] = Math.max(0, estado[nome][tipo] + valor);
+  render();
+};
+
+window.setValor = (nome, tipo, valor) => {
+  const v = parseInt(valor);
+  estado[nome][tipo] = isNaN(v) || v < 0 ? 0 : v;
+  render();
+};
+
+const telefoneWhats = "554796086328"; // +55 47 9608-6328
+
 // 📊 EXPORTAR CSV + WHATSAPP
 document.getElementById("exportar").onclick = () => {
   let csv = "Item;Minimo (Doses);Estoque (Doses);Bar (Doses);Pedido (Doses);Sugestao Garrafas\n";
@@ -38,3 +354,14 @@ document.getElementById("exportar").onclick = () => {
     );
   }, 2000); // 2000ms (2 segundos) de delay
 };
+
+
+function toggleMenu(){
+  document.getElementById("menu").classList.toggle("active");
+}
+
+render();
+</script>
+
+</body>
+</html>
