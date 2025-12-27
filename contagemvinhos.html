@@ -323,16 +323,6 @@ document.getElementById("exportar").onclick = () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-
-  // 🔗 Abre WhatsApp já no número certo
-  const mensagem = encodeURIComponent(
-    `Segue a contagem de vinhos (${data}).\nArquivo: ${nomeArquivo}`
-  );
-
-  window.open(
-    `https://wa.me/5547996086328?text=${mensagem}`,
-    "_blank"
-  );
 };
 
 function toggleMenu(){
@@ -340,8 +330,10 @@ function toggleMenu(){
 }
 
 
+
 render();
 </script>
 
 </body>
 </html>
+
