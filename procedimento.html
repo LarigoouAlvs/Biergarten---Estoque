@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biergarten | Procedimentos</title>
+
+<style>
+:root{
+  --amarelo:#F4C430;
+  --preto:#1a1a1a;
+  --preto80:#262626;
+  --borda:#444;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--preto);
+  color:#fff;
+  font-family:Arial, sans-serif;
+  padding:20px;
+}
+
+/* ===== TOPO ===== */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+header h1{
+  color:var(--amarelo);
+  font-size:20px;
+  margin:0;
+}
+
+.hamburguer{
+  display:none;
+  font-size:26px;
+  background:none;
+  border:none;
+  color:var(--amarelo);
+  cursor:pointer;
+}
+
+nav{
+  display:flex;
+  gap:8px;
+}
+
+nav a{
+  background:var(--amarelo);
+  color:#000;
+  padding:8px 12px;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size:13px;
+}
+
+/* ===== MOBILE MENU ===== */
+@media(max-width:768px){
+  .hamburguer{ display:block; }
+
+  nav{
+    position:absolute;
+    top:60px;
+    right:20px;
+    background:var(--preto80);
+    flex-direction:column;
+    padding:10px;
+    border-radius:8px;
+    display:none;
+  }
+
+  nav.active{
+    display:flex;
+  }
+
+  nav a{
+    width:100%;
+  }
+}
+
+/* ===== CONTEÚDO ===== */
+.section{
+  background:var(--preto80);
+  border:1px solid var(--borda);
+  border-radius:8px;
+  padding:15px;
+  margin-bottom:15px;
+}
+
+.section h2{
+  color:var(--amarelo);
+  font-size:16px;
+  margin-top:0;
+}
+
+.section ul{
+  padding-left:18px;
+}
+
+.section li{
+  margin-bottom:6px;
+  font-size:14px;
+  line-height:1.4;
+}
+
+.alerta{
+  background:#332b00;
+  border-left:4px solid var(--amarelo);
+  padding:10px;
+  margin-top:10px;
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📋 Procedimentos</h1>
+  <button class="hamburguer" onclick="toggleMenu()">☰</button>
+
+  <nav id="menu">
+    <a href="recado.html">📝 Mural</a>
+    <a href="index.html">⬅ Voltar</a>
+  </nav>
+</header>
+
+<!-- ======================= PRODUÇÃO ======================= -->
+<div class="section">
+  <h2>🍹 Procedimentos de Produção</h2>
+  <ul>
+    <li>Higienizar mãos antes de iniciar qualquer preparo.</li>
+    <li>Separar insumos conforme ficha técnica do drink.</li>
+    <li>Utilizar medidores (jigger) obrigatoriamente.</li>
+    <li>Produções antecipadas devem ser etiquetadas com data e responsável.</li>
+    <li>Não reutilizar gelo de drinks devolvidos.</li>
+  </ul>
+</div>
+
+<!-- ======================= OPERAÇÃO ======================= -->
+<div class="section">
+  <h2>🍺 Procedimentos Operacionais</h2>
+  <ul>
+    <li>Conferir estoque no início e no final do turno.</li>
+    <li>Atualizar contagens no sistema Biergarten.</li>
+    <li>Copos e taças devem estar sempre polidos.</li>
+    <li>Pedidos devem seguir ordem de comanda.</li>
+    <li>Informar o gerente em caso de ruptura de estoque.</li>
+  </ul>
+</div>
+
+<!-- ======================= LIMPEZA ======================= -->
+<div class="section">
+  <h2>🧽 Procedimentos de Limpeza</h2>
+
+  <ul>
+    <li><strong>Resfriadores e Freezers (Parte Interna):</strong>
+      Antes de efetuar qualquer manutenção ou limpeza, desligar o equipamento da tomada.
+      Retirar todos os produtos internos, realizar a limpeza interna com pano úmido e detergente neutro.
+      Secar completamente antes de religar.
+    </li>
+
+    <li><strong>Resfriadores e Freezers (Motores):</strong>
+      Esfregar toda a área externa com esponja e espuma de detergente.
+      Utilizar soprador para remover poeira da unidade condensadora.
+    </li>
+
+    <li><strong>Máquina de Gelo:</strong>
+      Realizar limpeza conforme necessidade operacional.
+      Nunca utilizar produtos abrasivos ou químicos não autorizados.
+    </li>
+
+    <li><strong>Mármore / Balcão / Pias:</strong>
+      Limpeza diária com detergente neutro e água.
+      Secar após a limpeza para evitar manchas e acúmulo de resíduos.
+    </li>
+
+    <li><strong>Liquidificadores:</strong>
+      Colocar água e detergente no copo do liquidificador.
+      Acionar o equipamento por alguns segundos.
+      Enxaguar completamente e deixar secar.
+    </li>
+
+    <li><strong>Espremedor de Suco:</strong>
+      Esfregar externamente com esponja e espuma.
+      Enxaguar e secar após o uso.
+    </li>
+
+    <li><strong>Cafeteira Nespresso:</strong>
+      Remover todas as partes móveis.
+      Lavar na lavação com detergente neutro.
+      Montar novamente somente após completa secagem.
+    </li>
+
+    <li><strong>Estação de Cocktails:</strong>
+      Retirar todas as partes móveis da estação.
+      Levar para lavagem com água e detergente.
+      Secar antes de recolocar.
+    </li>
+
+    <li><strong>Chopeira / Pingadeira:</strong>
+      Retirar partes móveis da estação.
+      Realizar lavagem adequada com detergente.
+    </li>
+
+    <li><strong>Balcão Externo de Madeira:</strong>
+      Limpar exclusivamente com álcool e pano Perflex.
+      ❌ Não utilizar água.
+    </li>
+
+    <li><strong>Prateleiras de Destilados:</strong>
+      Limpeza somente com álcool e pano Perflex.
+    </li>
+
+    <li><strong>Garrafas de Destilados:</strong>
+      Limpar com pano de polimento seco.
+      ❌ Não molhar as garrafas.
+    </li>
+
+    <li><strong>Espelhos:</strong>
+      Limpeza somente com álcool e pano Perflex.
+    </li>
+
+    <li><strong>Piso do Bar:</strong>
+      Passar mop em toda a extensão do bar, incluindo áreas de circulação.
+    </li>
+
+    <li><strong>Piso da Lavação:</strong>
+      Esfregar o chão da lavação ao final de cada operação.
+    </li>
+
+    <li><strong>Ralos:</strong>
+      Retirar a grade externa.
+      Lavar com detergente e água corrente.
+    </li>
+
+    <li><strong>Lixeiras:</strong>
+      Limpeza obrigatória ao final de cada operação.
+      Remover sacos, lavar internamente e externamente.
+    </li>
+
+    <li><strong>Utensílios Diversos:</strong>
+      Limpar com esponja, água e detergente.
+      Retirar resíduos sólidos antes da lavagem.
+    </li>
+
+    <li><strong>Estações Auxiliares:</strong>
+      Retirar partes móveis e realizar lavagem completa na lavação.
+    </li>
+
+    <li><strong>Freezers Externos:</strong>
+      Lavar com espuma e remover excesso com pano Perflex.
+    </li>
+  </ul>
+
+  <div class="alerta">
+    ⚠️ Atenção: A limpeza deve ser realizada rigorosamente conforme descrito.
+    O descumprimento compromete a higiene, a operação e a segurança alimentar.
+  </div>
+</div>
+
+
+<!-- ======================= FECHAMENTO ======================= -->
+<div class="section">
+  <h2>🔒 Fechamento de Turno</h2>
+  <ul>
+    <li>Realizar contagem final no sistema.</li>
+    <li>Armazenar bebidas corretamente.</li>
+    <li>Desligar equipamentos conforme instruções.</li>
+    <li>Comunicar pendências ao próximo turno.</li>
+  </ul>
+</div>
+
+<script>
+function toggleMenu(){
+  document.getElementById("menu").classList.toggle("active");
+}
+</script>
+
+</body>
+</html>
