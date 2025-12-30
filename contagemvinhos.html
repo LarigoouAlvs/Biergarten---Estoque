@@ -73,23 +73,17 @@ button{
   gap:4px;
   justify-content:center;
   align-items:center;
+  flex-wrap:wrap;
 }
 
-input[type=number] {
-  background: #333;
-  color: #fff;
-  border: 1px solid var(--borda);
-  padding: 4px;
-  border-radius: 4px;
-  width: 50px;
-  text-align: center;
-}
-
-/* Remove setas do input */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+input[type=number]{
+  background:#333;
+  color:#fff;
+  border:1px solid var(--borda);
+  padding:4px;
+  border-radius:4px;
+  width:50px;
+  text-align:center;
 }
 
 footer{
@@ -102,7 +96,7 @@ footer button{
   font-size:16px;
 }
 
-/* ===== MENU RESPONSIVO ===== */
+/* MENU */
 .topo{
   display:flex;
   align-items:center;
@@ -119,18 +113,13 @@ footer button{
   cursor:pointer;
 }
 
-/* MENU NORMAL */
 #menu{
   display:flex;
   gap:8px;
 }
 
-/* MOBILE */
-@media (max-width: 768px){
-  .hamburguer{
-    display:block;
-  }
-
+@media (max-width:768px){
+  .hamburguer{ display:block; }
   #menu{
     position:absolute;
     top:60px;
@@ -139,33 +128,18 @@ footer button{
     flex-direction:column;
     padding:10px;
     border-radius:8px;
-    gap:8px;
     display:none;
-    box-shadow:0 0 10px rgba(0,0,0,.4);
   }
-
-  #menu.active{
-    display:flex;
-  }
-
-  #menu a{
-    width:100%;
-    text-align:left;
-  }
+  #menu.active{ display:flex; }
 }
-
 </style>
 </head>
 
 <body>
 
 <header class="topo">
-  <h1>📦 Contagem</h1>
-
-  <!-- BOTÃO HAMBURGUER -->
+  <h1>📦 Contagem Vinhos</h1>
   <button class="hamburguer" onclick="toggleMenu()">☰</button>
-
-  <!-- MENU -->
   <nav id="menu">
     <a href="contagemsoft.html">🥤 Softs</a>
     <a href="contagemdestilados.html">🍸 Destilados</a>
@@ -174,8 +148,7 @@ footer button{
   </nav>
 </header>
 
-
-<table id="tabela">
+<table>
   <thead>
     <tr>
       <th>Item</th>
@@ -185,7 +158,7 @@ footer button{
       <th>Pedido</th>
     </tr>
   </thead>
-  <tbody></tbody>
+  <tbody id="tbody"></tbody>
 </table>
 
 <footer>
@@ -193,7 +166,11 @@ footer button{
 </footer>
 
 <script>
-/* 🔢 ITENS */
+/* ================= CONFIG ================= */
+const STORAGE_KEY = "biergarten_contagem_vinhos";
+const caixaPadrao = 6;
+
+/* ================= ITENS ================= */
 const itens = [
   { nome:"Salton Series Brut", minimo:6 },
   { nome:"Dom Moscatel", minimo:4 },
@@ -248,92 +225,107 @@ const itens = [
   { nome:"Vinho Branco Entre Portas", minimo:1 }
 ];
 
-const estado = {};
-const caixaPadrao = 6; // Padrão para vinhos
-const tbody = document.querySelector("tbody");
+/* ================= ESTADO ================= */
+const estado = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+itens.forEach(item=>{
+  if(!estado[item.nome]){
+    estado[item.nome] = { estoque:0, bar:0 };
+  }
+});
+
+const tbody = document.getElementById("tbody");
+
+/* ================= FUNÇÕES ================= */
+function salvarEstado(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+}
 
 function render(){
   tbody.innerHTML = "";
 
-  itens.forEach(item => {
-    estado[item.nome] ??= { estoque: 0, bar: 0 };
-
-    const total = estado[item.nome].estoque + estado[item.nome].bar;
+  itens.forEach(item=>{
+    const e = estado[item.nome];
+    const total = e.estoque + e.bar;
     const pedido = Math.max(item.minimo - total, 0);
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="nome">${item.nome}</td>
       <td>${item.minimo}</td>
+
       <td>
         <div class="acoes">
           <button onclick="alt('${item.nome}','estoque',-1)">-1</button>
           <button onclick="alt('${item.nome}','estoque',-${caixaPadrao})">📦</button>
-          <input type="number" min="0" value="${estado[item.nome].estoque}" onchange="setValor('${item.nome}','estoque',this.value)">
+          <input value="${e.estoque}"
+            onchange="setValor('${item.nome}','estoque',this.value)">
           <button onclick="alt('${item.nome}','estoque',${caixaPadrao})">📦</button>
           <button onclick="alt('${item.nome}','estoque',1)">+1</button>
         </div>
       </td>
+
       <td>
         <div class="acoes">
           <button onclick="alt('${item.nome}','bar',-1)">-1</button>
           <button onclick="alt('${item.nome}','bar',-${caixaPadrao})">📦</button>
-          <input type="number" min="0" value="${estado[item.nome].bar}" onchange="setValor('${item.nome}','bar',this.value)">
+          <input value="${e.bar}"
+            onchange="setValor('${item.nome}','bar',this.value)">
           <button onclick="alt('${item.nome}','bar',${caixaPadrao})">📦</button>
           <button onclick="alt('${item.nome}','bar',1)">+1</button>
         </div>
       </td>
+
       <td>${pedido}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-window.alt = (nome, tipo, valor) => {
+window.alt = (nome,tipo,valor)=>{
   estado[nome][tipo] = Math.max(0, estado[nome][tipo] + valor);
+  salvarEstado();
   render();
 };
 
-window.setValor = (nome, tipo, valor) => {
+window.setValor = (nome,tipo,valor)=>{
   const v = parseInt(valor);
   estado[nome][tipo] = isNaN(v) || v < 0 ? 0 : v;
+  salvarEstado();
   render();
 };
 
-/* 📊 EXPORTAR */
-document.getElementById("exportar").onclick = () => {
-  let csv = "Item;Minimo;Estoque;Bar;Pedido\n";
+/* ================= EXPORTAR ================= */
+document.getElementById("exportar").onclick = ()=>{
+  let csv = "Item;Minimo;Estoque;Bar;Pedido;Sugestao (Caixas)\n";
 
-  itens.forEach(item => {
-    const total = estado[item.nome].estoque + estado[item.nome].bar;
-    const pedido = Math.max(item.minimo - total, 0);
-    csv += `${item.nome};${item.minimo};${estado[item.nome].estoque};${estado[item.nome].bar};${pedido}\n`;
+  itens.forEach(item=>{
+    const e = estado[item.nome];
+    const pedido = Math.max(item.minimo - (e.estoque + e.bar), 0);
+    const sugestaoCaixas = (pedido / caixaPadrao).toFixed(1);
+    csv += `${item.nome};${item.minimo};${e.estoque};${e.bar};${pedido};${sugestaoCaixas}\n`;
   });
 
-  const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-
-  // 🔽 Baixa o arquivo
+  const blob = new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
   const link = document.createElement("a");
-  const data = new Date().toLocaleDateString().replace(/\//g, '-');
-  const nomeArquivo = `contagem_vinhos_${data}.csv`;
+  const data = new Date().toLocaleDateString().replace(/\//g,'-');
 
-  link.href = url;
-  link.download = nomeArquivo;
-  document.body.appendChild(link);
+  link.href = URL.createObjectURL(blob);
+  link.download = `contagem_vinhos_${data}.csv`;
   link.click();
-  document.body.removeChild(link);
+
+  /* LIMPA SOMENTE APÓS EXPORTAR */
+  localStorage.removeItem(STORAGE_KEY);
+  itens.forEach(i=>estado[i.nome]={estoque:0,bar:0});
+  render();
 };
 
 function toggleMenu(){
   document.getElementById("menu").classList.toggle("active");
 }
 
-
-
 render();
 </script>
 
 </body>
 </html>
-
