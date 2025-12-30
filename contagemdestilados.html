@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Biergarten | Contagem</title>
+<title>Biergarten | Contagem Destilados</title>
 
 <style>
 :root{
@@ -72,6 +72,7 @@ button{
   display:flex;
   gap:4px;
   justify-content:center;
+  flex-wrap:wrap;
 }
 
 footer{
@@ -84,7 +85,7 @@ footer button{
   font-size:16px;
 }
 
-/* ===== MENU RESPONSIVO ===== */
+/* MENU */
 .topo{
   display:flex;
   align-items:center;
@@ -101,18 +102,13 @@ footer button{
   cursor:pointer;
 }
 
-/* MENU NORMAL */
 #menu{
   display:flex;
   gap:8px;
 }
 
-/* MOBILE */
-@media (max-width: 768px){
-  .hamburguer{
-    display:block;
-  }
-
+@media (max-width:768px){
+  .hamburguer{ display:block; }
   #menu{
     position:absolute;
     top:60px;
@@ -121,33 +117,18 @@ footer button{
     flex-direction:column;
     padding:10px;
     border-radius:8px;
-    gap:8px;
     display:none;
-    box-shadow:0 0 10px rgba(0,0,0,.4);
   }
-
-  #menu.active{
-    display:flex;
-  }
-
-  #menu a{
-    width:100%;
-    text-align:left;
-  }
+  #menu.active{ display:flex; }
 }
-
 </style>
 </head>
 
 <body>
 
 <header class="topo">
-  <h1>📦 Contagem</h1>
-
-  <!-- BOTÃO HAMBURGUER -->
+  <h1>📦 Contagem Destilados</h1>
   <button class="hamburguer" onclick="toggleMenu()">☰</button>
-
-  <!-- MENU -->
   <nav id="menu">
     <a href="contagemsoft.html">🥤 Softs</a>
     <a href="contagemdestilados.html">🍸 Destilados</a>
@@ -156,8 +137,7 @@ footer button{
   </nav>
 </header>
 
-
-<table id="tabela">
+<table>
   <thead>
     <tr>
       <th>Item</th>
@@ -167,20 +147,20 @@ footer button{
       <th>Pedido</th>
     </tr>
   </thead>
-  <tbody></tbody>
+  <tbody id="tbody"></tbody>
 </table>
 
 <footer>
   <button id="exportar">📄 Exportar Contagem</button>
 </footer>
 
-
-</footer>
-
 <script>
-/* 🔢 ITENS */
+/* ================= CONFIG ================= */
+const STORAGE_KEY = "biergarten_contagem_destilados";
+
+/* ================= ITENS ================= */
 const itens = [
-    { nome:"Bacardi Carta Blanca Rum", dosesPorGarrafa:14, minimoGarrafas:3 },
+{ nome:"Bacardi Carta Blanca Rum", dosesPorGarrafa:14, minimoGarrafas:3 },
     { nome:"Bacardi Carta Oro Rum", dosesPorGarrafa:19, minimoGarrafas:2 },
     { nome:"Malibu Rum", dosesPorGarrafa:14, minimoGarrafas:1 },
     { nome:"Cachaça Ypióca Ouro", dosesPorGarrafa:19, minimoGarrafas:2 },
@@ -260,87 +240,107 @@ const itens = [
     { nome:"Xarope 1883 Cranberry", dosesPorGarrafa:20, minimoGarrafas:1 }
 ];
 
-const estado = {};
-const tbody = document.querySelector("tbody");
+/* ================= ESTADO ================= */
+const estado = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+itens.forEach(item=>{
+  if(!estado[item.nome]){
+    estado[item.nome] = { estoque:0, bar:0 };
+  }
+});
+
+const tbody = document.getElementById("tbody");
+
+/* ================= FUNÇÕES ================= */
+function salvarEstado(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+}
 
 function render(){
   tbody.innerHTML = "";
 
-  itens.forEach(item => {
-    estado[item.nome] ??= { estoque: 0, bar: 0 };
+  itens.forEach(item=>{
+    const e = estado[item.nome];
 
     const minimoDoses = item.minimoGarrafas * item.dosesPorGarrafa;
-    const totalDoses = estado[item.nome].estoque + estado[item.nome].bar;
+    const totalDoses = e.estoque + e.bar;
     const pedidoDoses = Math.max(minimoDoses - totalDoses, 0);
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="nome">${item.nome}</td>
       <td>${minimoDoses} doses</td>
+
       <td>
         <div class="acoes">
           <button onclick="alt('${item.nome}','estoque',-1)">-1</button>
           <button onclick="alt('${item.nome}','estoque',-${item.dosesPorGarrafa})">-🍾</button>
-          <input type="number" min="0" value="${estado[item.nome].estoque}" onchange="setValor('${item.nome}','estoque',this.value)" style="width:55px;text-align:center;">
+          <input type="number" min="0" value="${e.estoque}" 
+            onchange="setValor('${item.nome}','estoque',this.value)" 
+            style="width:55px;text-align:center;">
           <button onclick="alt('${item.nome}','estoque',${item.dosesPorGarrafa})">+🍾</button>
           <button onclick="alt('${item.nome}','estoque',1)">+1</button>
         </div>
       </td>
+
       <td>
         <div class="acoes">
           <button onclick="alt('${item.nome}','bar',-1)">-1</button>
           <button onclick="alt('${item.nome}','bar',-${item.dosesPorGarrafa})">-🍾</button>
-          <input type="number" min="0" value="${estado[item.nome].bar}" onchange="setValor('${item.nome}','bar',this.value)" style="width:55px;text-align:center;">
+          <input type="number" min="0" value="${e.bar}" 
+            onchange="setValor('${item.nome}','bar',this.value)" 
+            style="width:55px;text-align:center;">
           <button onclick="alt('${item.nome}','bar',${item.dosesPorGarrafa})">+🍾</button>
           <button onclick="alt('${item.nome}','bar',1)">+1</button>
         </div>
       </td>
+
       <td>${pedidoDoses} doses</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-window.alt = (nome, tipo, valor) => {
+window.alt = (nome,tipo,valor)=>{
   estado[nome][tipo] = Math.max(0, estado[nome][tipo] + valor);
+  salvarEstado();
   render();
 };
 
-window.setValor = (nome, tipo, valor) => {
+window.setValor = (nome,tipo,valor)=>{
   const v = parseInt(valor);
   estado[nome][tipo] = isNaN(v) || v < 0 ? 0 : v;
+  salvarEstado();
   render();
 };
 
-// 📊 EXPORTAR CSV
-document.getElementById("exportar").onclick = () => {
-  let csv = "Item;Minimo (Doses);Estoque (Doses);Bar (Doses);Pedido (Doses);Sugestao Garrafas\n";
+/* ================= EXPORTAR ================= */
+document.getElementById("exportar").onclick = ()=>{
+  let csv = "Item;Minimo (Doses);Estoque (Doses);Bar (Doses);Pedido (Doses);Sugestao (Garrafas)\n";
 
-  itens.forEach(item => {
+  itens.forEach(item=>{
+    const e = estado[item.nome];
     const minimoDoses = item.minimoGarrafas * item.dosesPorGarrafa;
-    const totalDoses = estado[item.nome].estoque + estado[item.nome].bar;
-    const pedidoDoses = Math.max(minimoDoses - totalDoses, 0);
-    const sugestaoGarrafas = (pedidoDoses / item.dosesPorGarrafa).toFixed(1);
+    const total = e.estoque + e.bar;
+    const pedido = Math.max(minimoDoses - total, 0);
+    const sugestaoGarrafas = (pedido / item.dosesPorGarrafa).toFixed(1);
 
-    csv += `${item.nome};${minimoDoses};${estado[item.nome].estoque};${estado[item.nome].bar};${pedidoDoses};${sugestaoGarrafas}\n`;
+    csv += `${item.nome};${minimoDoses};${e.estoque};${e.bar};${pedido};${sugestaoGarrafas}\n`;
   });
 
-  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  const data = new Date().toLocaleDateString().replace(/\//g, "-");
-  const nomeArquivo = `contagem_destilados_${data}.csv`;
-
-  // ⬇️ Download automático
+  const blob = new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
   const link = document.createElement("a");
-  link.href = url;
-  link.download = nomeArquivo;
-  document.body.appendChild(link);
+  link.href = URL.createObjectURL(blob);
+  link.download = "contagem_destilados.csv";
   link.click();
-  document.body.removeChild(link);
+
+  /* LIMPA SOMENTE DEPOIS DE EXPORTAR */
+  localStorage.removeItem(STORAGE_KEY);
+  itens.forEach(i=>{
+    estado[i.nome] = { estoque:0, bar:0 };
+  });
+  render();
 };
-
-
 
 function toggleMenu(){
   document.getElementById("menu").classList.toggle("active");
@@ -351,4 +351,3 @@ render();
 
 </body>
 </html>
-
